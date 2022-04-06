@@ -5,6 +5,7 @@
     <title>注册</title>
 </head>
 <body>
+<h1><a href="{% url "to_Login" %}">返回</a></h1>
 <form action="/register/" method="post">
     {% csrf_token %}
     <p><label>姓名</label><input type="text" name="name"></p>
