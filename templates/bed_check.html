@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>归寝签到</title>
+</head>
+<body>
+    <a href="{% url 'a_nav' %}">返回</a>
+    <p><label>请输入需查询的学生学号</label></p>
+    <p><label>学号</label><input type="text" name="name"></p>
+    <input type="submit" value="查询">
+
+<table width="400" border="1" cellpadding="10">
+  <tr>
+    <th>id</th>
+    <th>bed_check</th>
+    <th>time</th>
+    <th>dor_id</th>
+  </tr>
+  <tr>
+    <td>u_id</td>
+    <td>yes</td>
+    <td>21:20</td>
+    <td>01-220</td>
+  </tr>
+  <tr>
+    <td>u_id</td>
+    <td>no</td>
+    <td></td>
+    <td>01-220</td>
+  </tr>
+</body>
+</html>
