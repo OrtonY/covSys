@@ -34,9 +34,11 @@ def Login(request):
             # return HttpResponse("欢迎{} {}登入校园疫情防控信息管理系统".format(u_name, u_identity))
             return render(request, 'u_navigation.html', context=value)
         elif state_a >= 1:
-            a_name = Admin.objects.get(a_id=user).a_name
-            value = {"name": a_name}
-            # return HttpResponse("欢迎{} 管理员登入校园疫情防控信息管理系统".format(a_name))
+            # a_name = Admin.objects.get(a_id=user).a_name
+            # value = {"name": a_name}
+            # return HttpResponse("欢迎admin 管理员登入校园疫情防控信息管理系统".format(a_name))
+            # return render(request, 'a_navigation.html')
+            value = {"id": user}
             return render(request, 'a_navigation.html', context=value)
         else:
             messages.error(request, "账号或密码有误")
@@ -71,10 +73,14 @@ def Register(request):
                 userinfo = Users(u_id=r_id, u_name=r_name, u_password=r_pwd, identity=r_identity, phone=r_phone,
                                  email=r_email)
                 userinfo.save()
+                print("1")
                 classinfo = Classes(u_id=r_id, classes=r_classes)
                 dormitoryinfo = Dormitory(u_id=r_id, department=int(r_dormitory[0:2]), room_id=r_dormitory[-3:])
+                print("2")
                 classinfo.save()
+                print("3")
                 dormitoryinfo.save()
+                print("4")
                 value = {"id": r_id}
                 # return HttpResponse("注册成功,你的id为{}".format(r_id))
                 return render(request, 'u_login.html', context=value)
@@ -88,3 +94,11 @@ def Register(request):
 
 def logout(request):
     return render(request, 'before_login.html')
+
+
+def u_info(request, u_id):
+    data = Users.objects.get(u_id=u_id)
+    cla = Classes.objects.get(u__u_id=u_id)
+    dor = Dormitory.objects.get(u__u_id=u_id)
+    value = {'id': u_id, 'name': data.u_name, 'identity': data.identity, 'phone': data.phone, 'email': data.email, 'year': u_id[:4], 'class': cla.classes, 'dor': str(dor.department) + dor.room_id}
+    return render(request, 'u_information.html', context=value)

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>信息查询</title>
+</head>
+<body>
+<a href="{% url 'logout' %}">退出登录</a>
+<table id="infomation">
+    <tr><th>我</th></tr>
+    <tr><td>姓名:{{ name }}</td></tr>
+    <tr><td>学号:{{ id }}</td></tr>
+    <tr><td>身份:{{ identity }}</td></tr>
+    <tr><td>入学年份:{{ year }}</td></tr>
+    <tr><td>班级:{{ class }}</td></tr>
+    <tr><td>宿舍:{{ dor }}</td></tr>
+    <tr><td>手机号:{{ phone }}</td></tr>
+    <tr><td>邮箱:{{ email }}</td></tr>
+</table>
+<style type="text/css">
+    tr{
+        text-align: left;
+        font-size: larger;
+        line-height: 50px;
+    }
+    th{
+        text-align: center;
+        width: 500px;
+    }
+</style>
+</body>
+</html>
