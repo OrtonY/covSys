@@ -5,6 +5,8 @@
     <title>登录</title>
 </head>
 <body>
+<a href="{% url 'to_Login' %}">返回</a>
+<h1>用户端登陆界面</h1>
 <form action="{% url 'u_nav' %}" method="post">
     {% csrf_token %}
     <p><label>用户名</label><input name="user"/></p>

@@ -20,20 +20,35 @@ def toAlogin(request):
     return render(request, 'a_login.html')
 
 
-def Login(request):
+def u_Login(request):
     user = request.POST.get('user', '')
     pwd = request.POST.get('pwd', '')
 
     if user and pwd:
         state_u = Users.objects.filter(u_id=user, u_password=pwd).count()
-        state_a = Admin.objects.filter(a_id=user, a_password=pwd).count()
         if state_u >= 1:
             u_name = Users.objects.get(u_id=user).u_name
             u_identity = Users.objects.get(u_id=user).identity
             value = {"id": user, "name": u_name, "identity": u_identity}
             # return HttpResponse("欢迎{} {}登入校园疫情防控信息管理系统".format(u_name, u_identity))
             return render(request, 'u_navigation.html', context=value)
-        elif state_a >= 1:
+        else:
+            messages.error(request, "用户账号或密码有误")
+            return HttpResponseRedirect(reverse('u_Login'))
+            # return render(request, 'before_login.html')
+    else:
+        messages.error(request, "用户账号或密码不能为空")
+        # return render(request, 'before_login.html')
+        return HttpResponseRedirect(reverse('u_Login'))
+
+
+def a_Login(request):
+    user = request.POST.get('user', '')
+    pwd = request.POST.get('pwd', '')
+
+    if user and pwd:
+        state_a = Admin.objects.filter(a_id=user, a_password=pwd).count()
+        if state_a >= 1:
             # a_name = Admin.objects.get(a_id=user).a_name
             # value = {"name": a_name}
             # return HttpResponse("欢迎admin 管理员登入校园疫情防控信息管理系统".format(a_name))
@@ -41,13 +56,13 @@ def Login(request):
             value = {"id": user}
             return render(request, 'a_navigation.html', context=value)
         else:
-            messages.error(request, "账号或密码有误")
-            return HttpResponseRedirect(reverse('u_Login'))
+            messages.error(request, "管理员账号或密码有误")
+            return HttpResponseRedirect(reverse('a_Login'))
             # return render(request, 'before_login.html')
     else:
-        messages.error(request, "账号或密码不能为空")
+        messages.error(request, "管理员账号或密码不能为空")
         # return render(request, 'before_login.html')
-        return HttpResponseRedirect(reverse('u_Login'))
+        return HttpResponseRedirect(reverse('a_Login'))
 
 
 def toRegister(request):
@@ -73,14 +88,10 @@ def Register(request):
                 userinfo = Users(u_id=r_id, u_name=r_name, u_password=r_pwd, identity=r_identity, phone=r_phone,
                                  email=r_email)
                 userinfo.save()
-                print("1")
                 classinfo = Classes(u_id=r_id, classes=r_classes)
                 dormitoryinfo = Dormitory(u_id=r_id, department=int(r_dormitory[0:2]), room_id=r_dormitory[-3:])
-                print("2")
                 classinfo.save()
-                print("3")
                 dormitoryinfo.save()
-                print("4")
                 value = {"id": r_id}
                 # return HttpResponse("注册成功,你的id为{}".format(r_id))
                 return render(request, 'u_login.html', context=value)
@@ -92,6 +103,17 @@ def Register(request):
         return HttpResponse("系统目前出现故障，请稍后重试")
 
 
+def u_return(request, u_id):
+    data = Users.objects.get(u_id=u_id)
+    value = {"id": data.u_id, "name": data.u_name, "identity": data.identity}
+    return render(request, 'u_navigation.html', context=value)
+
+
+def a_return(request):
+    value = {"id": 'admin'}
+    return render(request, 'a_navigation.html', context=value)
+
+
 def logout(request):
     return render(request, 'before_login.html')
 
@@ -100,5 +122,36 @@ def u_info(request, u_id):
     data = Users.objects.get(u_id=u_id)
     cla = Classes.objects.get(u__u_id=u_id)
     dor = Dormitory.objects.get(u__u_id=u_id)
-    value = {'id': u_id, 'name': data.u_name, 'identity': data.identity, 'phone': data.phone, 'email': data.email, 'year': u_id[:4], 'class': cla.classes, 'dor': str(dor.department) + dor.room_id}
+    value = {'id': u_id, 'name': data.u_name, 'identity': data.identity, 'phone': data.phone, 'email': data.email,
+             'year': u_id[:4], 'class': cla.classes, 'dor': str(dor.department) + dor.room_id}
     return render(request, 'u_information.html', context=value)
+
+
+def a_u_info(request):
+    u_id = request.POST.get('id', '')
+    t_info = []
+    if u_id:
+        data = Users.objects.get(u_id=u_id)
+        t_info = [[data.u_id, data.u_name, data.identity, data.phone, data.email]]
+    else:
+        data = Users.objects.all()
+        for line in data:
+            l_info = [line.u_id, line.u_name, line.identity, line.phone, line.email]
+            t_info.append(l_info)
+    return render(request, 'a_u_info.html', {'data': t_info})
+
+
+def a_bed_check(request):
+    return render(request, 'a_bed_check.html')
+
+
+def a_day_clock(request):
+    return render(request, 'a_day_clock.html')
+
+
+def a_health_query(request):
+    return render(request, 'a_health_query.html')
+
+
+def a_inout_query(request):
+    return render(request, 'a_inout_query.html')

@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>学生信息</title>
+    <title>进出校查询</title>
 </head>
 <body>
-    <a href="{% url 'a_nav' %}">返回</a>
+    <a href="{% url 'a_return' %}">返回</a>
     <p><label>请输入需查询的学生学号</label></p>
     <p><label>学号</label><input type="text" name="name"></p>
     <input type="submit" value="查询">
@@ -15,24 +15,21 @@
 <table width="400" border="1" cellpadding="10">
   <tr>
     <th>id</th>
-    <th>name</th>
-    <th>password</th>
-    <th>phone</th>
-    <th>email</th>
-  </tr>
-  <tr>
-    <td>2019190100</td>
-    <td>xusong</td>
-    <td>dsed</td>
-    <td>10086</td>
-    <td>10086@qq.com</td>
+    <th>in/out</th>
+    <th>time</th>
+    <th>dor_id</th>
   </tr>
   <tr>
     <td>u_id</td>
-    <td>u_name</td>
-    <td>u_password></td>
-    <td>u_phone</td>
-    <td>u_email</td>
+    <td>in</td>
+    <td>12:20</td>
+    <td>01-220</td>
+  </tr>
+  <tr>
+    <td>u_id</td>
+    <td>out</td>
+    <td>12:30</td>
+    <td>01-220</td>
   </tr>
 </table>
 </body>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>学生信息</title>
+</head>
+<body>
+    <a href="{% url 'a_return' %}">返回</a>
+    <form action="/a_u_info/" method="post">
+        {% csrf_token %}
+        <p><label>请输入需查询的学生学号</label></p>
+        <p><label>学号</label><input type="text" name="id"></p>
+        <input type="submit" value="查询">
+    </form>
+
+
+
+<table width="400" border="1" cellpadding="10">
+  <tr>
+    <th>id</th>
+    <th>name</th>
+    <th>identity</th>
+    <th>phone</th>
+    <th>email</th>
+  </tr>
+    {% for line in data %}
+    <tr>
+        {% for i in line %}
+            <td>{{ i }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
