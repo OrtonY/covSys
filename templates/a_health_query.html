@@ -7,9 +7,11 @@
 </head>
 <body>
     <a href="{% url 'a_return' %}">返回</a>
-    <p><label>请输入需查询的学生学号</label></p>
-    <p><label>学号</label><input type="text" name="name"></p>
-    <input type="submit" value="查询">
+    <form>
+        <p><label>请输入需查询的学生学号</label></p>
+        <p><label>学号</label><input type="text" name="id"></p>
+        <input type="submit" value="查询">
+    </form>
 
 
 

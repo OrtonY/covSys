@@ -5,7 +5,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.urls import reverse
 
-from personalinfo.models import Users, Admin, Classes, Dormitory
+from personalinfo.models import Users, Admin, Classes, Dormitory, BackDailyClock, DailyClock
 
 
 def toLogin(request):
@@ -142,11 +142,30 @@ def a_u_info(request):
 
 
 def a_bed_check(request):
-    return render(request, 'a_bed_check.html')
+    u_id = request.POST.get('id', '')
+    t_info = []
+    if u_id:
+        data = BackDailyClock.objects.filter(u_id=u_id).order_by('-c_time')
+        dor = Dormitory.objects.get(u_id=u_id)
+        for line in data:
+            l_info = [line.u, line.in_out, line.c_time, str(dor.department) + dor.room_id]
+            t_info.append(l_info)
+    else:
+        data = BackDailyClock.objects.all().order_by('-c_time')
+        for line in data:
+            dor = Dormitory.objects.get(u_id=line.u)
+            l_info = [line.u, line.in_out, line.c_time, str(dor.department) + dor.room_id]
+            t_info.append(l_info)
+    return render(request, 'a_bed_check.html', {'data': t_info})
 
 
 def a_day_clock(request):
-    return render(request, 'a_day_clock.html')
+    data = DailyClock.objects.all()
+    t_info = []
+    for line in data:
+        l_info = [line.u, line.temperature, line.qrcode, line.emergency_phone]
+        t_info.append(l_info)
+    return render(request, 'a_day_clock.html', {'data': t_info})
 
 
 def a_health_query(request):
