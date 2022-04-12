@@ -6,25 +6,29 @@
 </head>
 <body>
 <a href="{% url 'a_return' %}">返回</a>
+
+    <form action="/a_day_clock/" method="post">
+        {% csrf_token %}
+        <p><label>请输入需查询的学生学号</label></p>
+        <p><label>学号</label><input type="text" name="id"></p>
+        <input type="submit" value="查询">
+    </form>
+
+
 <table width="400" border="1" cellpadding="10">
   <tr>
-    <th>id</th>
-    <th>day_clock</th>
-    <th>time</th>
-    <th>location</th>
+    <th>学号</th>
+    <th>体温</th>
+    <th>健康码</th>
+    <th>紧急联系人</th>
   </tr>
-  <tr>
-    <td>20191001</td>
-    <td>yes</td>
-    <td>12:20</td>
-    <td>zstu</td>
-  </tr>
-  <tr>
-    <td>u_id</td>
-    <td>no</td>
-    <td></td>
-    <td></td>
-  </tr>
+    {% for line in data %}
+    <tr>
+        {% for i in line %}
+            <td>{{ i }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
 </table>
 </body>
 </html>
