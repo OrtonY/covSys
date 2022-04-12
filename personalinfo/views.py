@@ -5,7 +5,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.urls import reverse
 
-from personalinfo.models import Users, Admin, Classes, Dormitory, BackDailyClock, DailyClock
+from personalinfo.models import Users, Admin, Classes, Dormitory, BackDailyClock, DailyClock, Iotable
 
 
 def toLogin(request):
@@ -160,11 +160,18 @@ def a_bed_check(request):
 
 
 def a_day_clock(request):
-    data = DailyClock.objects.all()
+    u_id = request.POST.get('id', '')
     t_info = []
-    for line in data:
-        l_info = [line.u, line.temperature, line.qrcode, line.emergency_phone]
-        t_info.append(l_info)
+    if u_id:
+        data = DailyClock.objects.filter(u_id=u_id).order_by('id')
+        for line in data:
+            l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone]
+            t_info.append(l_info)
+    else:
+        data = DailyClock.objects.all()
+        for line in data:
+            l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone]
+            t_info.append(l_info)
     return render(request, 'a_day_clock.html', {'data': t_info})
 
 
@@ -173,4 +180,25 @@ def a_health_query(request):
 
 
 def a_inout_query(request):
-    return render(request, 'a_inout_query.html')
+    u_id = request.POST.get('id', '')
+    t_info = []
+    if u_id:
+        data = Iotable.objects.filter(u_id=u_id).order_by('-io_time')
+        for line in data:
+            if line.in_out == 1:
+                in_out = "进"
+            else:
+                in_out = "出"
+            l_info = [line.u_id, in_out, line.io_time, line.door_id]
+            t_info.append(l_info)
+    else:
+        data = Iotable.objects.all()
+        for line in data:
+            if line.in_out==1:
+                in_out = "进"
+            else:
+                in_out = "出"
+            l_info = [line.u_id, in_out, line.io_time, line.door_id]
+            t_info.append(l_info)
+    return render(request, 'a_inout_query.html', {'data': t_info})
+
