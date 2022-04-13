@@ -41,6 +41,7 @@ class DailyClock(models.Model):
     temperature = models.FloatField(blank=True, null=True)
     qrcode = models.CharField(db_column='QRcode', max_length=10, blank=True, null=True)  # Field name made lowercase.
     emergency_phone = models.CharField(max_length=20, blank=True, null=True)
+    c_time = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -55,6 +56,15 @@ class Dormitory(models.Model):
     class Meta:
         managed = False
         db_table = 'dormitory'
+
+
+class Healthcode(models.Model):
+    u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    healthcode = models.CharField(max_length=10, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'healthcode'
 
 
 class Interfacciami(models.Model):
@@ -100,6 +110,15 @@ class NucleicAcid(models.Model):
         db_table = 'nucleic_acid'
 
 
+class Passphrase(models.Model):
+    u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
+    passphrase = models.CharField(max_length=10, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'passphrase'
+
+
 class Quarantine(models.Model):
     u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     qrcode = models.CharField(db_column='QRcode', max_length=10, blank=True, null=True)  # Field name made lowercase.
@@ -109,14 +128,6 @@ class Quarantine(models.Model):
     class Meta:
         managed = False
         db_table = 'quarantine'
-
-
-class Suspicious(models.Model):
-    u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'suspicious'
 
 
 class TQuarantine(models.Model):

@@ -1,11 +1,13 @@
+import xlrd
 from django.contrib import messages
+from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 # Create your views here.
 from django.urls import reverse
 
-from personalinfo.models import Users, Admin, Classes, Dormitory, BackDailyClock, DailyClock, Iotable
+from personalinfo.models import *
 
 
 def toLogin(request):
@@ -90,8 +92,12 @@ def Register(request):
                 userinfo.save()
                 classinfo = Classes(u_id=r_id, classes=r_classes)
                 dormitoryinfo = Dormitory(u_id=r_id, department=int(r_dormitory[0:2]), room_id=r_dormitory[-3:])
+                healthinfo = Healthcode(u_id=r_id, healthcode='green')
+                passphrase = Passphrase(u_id=r_id, passphrase='yes')
                 classinfo.save()
                 dormitoryinfo.save()
+                healthinfo.save()
+                passphrase.save()
                 value = {"id": r_id}
                 # return HttpResponse("注册成功,你的id为{}".format(r_id))
                 return render(request, 'u_login.html', context=value)
@@ -116,6 +122,43 @@ def a_return(request):
 
 def logout(request):
     return render(request, 'before_login.html')
+
+
+def to_batch(request):
+    return render(request, "batch_upload.html")
+
+
+def excel_upload(request):
+    if request.method == "POST":
+        f = request.FILES['my_file']
+        type_excel = f.name.split('.')[1]
+        if 'xls' == type_excel:
+            wb = xlrd.open_workbook(filename=None, file_contents=f.read())
+            table = wb.sheets()[0]
+            nrows = table.nrows
+            try:
+                with transaction.atomic():
+                    for i in range(1, nrows):
+                        rowValues = table.row_values(i)
+                        userinfo = Users(u_id=str(rowValues[0])[:-2], u_name=str(rowValues[1]), u_password=str(rowValues[2])[:-2], identity=str(rowValues[3]), phone=str(rowValues[6])[:-2],
+                                         email=str(rowValues[7]))
+                        userinfo.save()
+                        classinfo = Classes(u_id=str(rowValues[0])[:-2], classes=str(rowValues[4])[:-2])
+                        dormitoryinfo = Dormitory(u_id=str(rowValues[0])[:-2], department=int(str(rowValues[5])[0:2]), room_id=str(rowValues[5])[-3:])
+                        healthinfo = Healthcode(u_id=str(rowValues[0])[:-2], healthcode='green')
+                        passphrase = Passphrase(u_id=str(rowValues[0])[:-2], passphrase='yes')
+                        classinfo.save()
+                        dormitoryinfo.save()
+                        healthinfo.save()
+                        passphrase.save()
+            except Exception as e:
+                return HttpResponse('数据存在错误....')
+
+            return HttpResponse('上传成功')
+
+        return HttpResponse('上传文件格式不是xls')
+
+    return HttpResponse('不是post请求')
 
 
 def u_info(request, u_id):

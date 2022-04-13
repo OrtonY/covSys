@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>批量上传数据</title>
+</head>
+<body>
+    <form action="{% url 'batch_upload' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="my_file">
+        <input type="submit">
+    </form>
+</body>
+</html>
