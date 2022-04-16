@@ -222,6 +222,39 @@ def a_health_query(request):
     return render(request, 'a_health_query.html')
 
 
+
+
+def a_examine(request):
+    u_id = request.POST.get('id', '')
+    t_info = []
+    if u_id:
+        data = Judge.objects.filter(u_id=u_id).order_by('-io_time')
+        for line in data:
+            if line.state == 1:
+                state = "同意"
+            elif line.state == 2:
+                state = "不同意"
+            else:
+                state="未审核"
+            l_info = {"id":line.id,"u_id":line.u_id, "a_id":line.a_id, "l_time":line.l_time, "states":state}
+            t_info.append(l_info)
+            print(t_info)
+    else:
+        data = Judge.objects.all()
+        for line in data:
+            if line.state == 1:
+                state = "同意"
+            elif line.state == 2:
+                state = "不同意"
+            else :
+                state = "未审核"
+            l_info = {"id":line.id,"u_id":line.u_id, "a_id":line.a_id, "l_time":line.l_time, "states":state}
+            t_info.append(l_info)
+            print(t_info)
+    return render(request, 'a_examine.html', {'data': t_info})
+
+
+
 def a_inout_query(request):
     u_id = request.POST.get('id', '')
     t_info = []
