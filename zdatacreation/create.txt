@@ -1,0 +1,130 @@
+create schema covdefence;
+use covdefence;
+
+#用户
+create table users(
+u_id varchar(20) primary key,
+u_name varchar(50),
+u_password varchar(20),
+identity varchar(20),
+phone varchar(20),
+email varchar(20)
+)ENGINE=InnoDB;
+
+#管理员
+create table admin(
+a_id varchar(20) primary key,
+a_password varchar(20)
+)ENGINE=InnoDB;
+
+#班级表
+create table classes(
+id int auto_increment primary key,
+u_id varchar(20),
+classes varchar(10),
+FOREIGN KEY(u_id) references users (u_id)
+)ENGINE=InnoDB;
+
+#宿舍表
+create table dormitory(
+id int auto_increment primary key,
+u_id varchar(20),
+department int,
+room_id varchar(10),
+FOREIGN KEY(u_id) references users (u_id)
+)ENGINE=InnoDB;
+
+#通行码
+create table passphrase(
+id int auto_increment primary key,
+u_id varchar(20),
+passphrase varchar(10),
+FOREIGN KEY(u_id) references users (u_id)
+)ENGINE=InnoDB;
+
+#健康码
+create table healthcode(
+id int auto_increment primary key,
+u_id varchar(20),
+healthcode varchar(10),
+FOREIGN KEY(u_id) references users (u_id)
+)ENGINE=InnoDB;
+
+#出入表
+create table iotable(
+id int auto_increment primary key,
+u_id varchar(20),
+in_out int,
+io_time datetime,
+door_id int,
+FOREIGN KEY(u_id) references users (u_id)
+)ENGINE=InnoDB;
+
+#行程表
+create table u_schedule(
+id int auto_increment primary key,
+u_id varchar(20),
+location varchar(200),
+o_time datetime,
+FOREIGN KEY(u_id) references users (u_id)
+)ENGINE=InnoDB;
+
+#隔离表
+create table quarantine(
+id int auto_increment primary key,
+u_id varchar(20),
+q_location varchar(200),
+cancel_time datetime,
+FOREIGN KEY(u_id) references users (u_id)
+)ENGINE=InnoDB;
+
+#隔离总记录表
+create table t_quarantine(
+id int auto_increment primary key,
+u_id varchar(20),
+q_location varchar(200),
+i_time datetime,
+o_time datetime,
+FOREIGN KEY(u_id) references users (u_id)
+)ENGINE=InnoDB;
+
+#核酸表
+create table nucleic_acid(
+id int auto_increment primary key,
+u_id varchar(20),
+t_time datetime,
+result varchar(20),
+FOREIGN KEY(u_id) references users (u_id)
+)ENGINE=InnoDB;
+
+#打卡表
+create table daily_clock(
+id int auto_increment primary key,
+u_id varchar(20),
+temperature float,
+QRcode varchar(10),
+emergency_person varchar(20),
+emergency_phone varchar(20),
+c_time datetime,
+FOREIGN KEY(u_id) references users (u_id)
+)ENGINE=InnoDB;
+
+#外出审批表
+create table judge(
+id int auto_increment primary key,
+u_id varchar(20),
+l_time int,
+reason varchar(200),
+state boolean,
+FOREIGN KEY(u_id) references users (u_id)
+)ENGINE=InnoDB;
+
+#违规记录表
+create table interfacciami(
+id int auto_increment primary key,
+u_id varchar(20),
+reason varchar(200),
+FOREIGN KEY(u_id) references users (u_id)
+)ENGINE=InnoDB;
+
+insert into admin value('admin', 123456);

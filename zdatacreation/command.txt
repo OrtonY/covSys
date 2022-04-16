@@ -1,0 +1,4 @@
+1.将create复制到mysql中
+2.python manage.py inspectdb > personalinfo/models.py
+3.转utf-8
+4.python manage.py migrate

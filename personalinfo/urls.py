@@ -16,7 +16,6 @@ urlpatterns = [
     path('a_navigation/admin/', views.a_return, name="a_return"),
     path('u_info/<str:u_id>', views.u_info, name="u_info"),
     path('a_u_info/', views.a_u_info, name="a_u_info"),
-    path('a_bed_check/', views.a_bed_check, name="a_bed_check"),
     path('a_day_clock/', views.a_day_clock, name="a_day_clock"),
     path('a_health_query/', views.a_health_query, name="a_health_query"),
     path('a_inout_query/', views.a_inout_query, name="a_inout_query"),

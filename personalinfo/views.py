@@ -140,11 +140,14 @@ def excel_upload(request):
                 with transaction.atomic():
                     for i in range(1, nrows):
                         rowValues = table.row_values(i)
-                        userinfo = Users(u_id=str(rowValues[0])[:-2], u_name=str(rowValues[1]), u_password=str(rowValues[2])[:-2], identity=str(rowValues[3]), phone=str(rowValues[6])[:-2],
+                        userinfo = Users(u_id=str(rowValues[0])[:-2], u_name=str(rowValues[1]),
+                                         u_password=str(rowValues[2])[:-2], identity=str(rowValues[3]),
+                                         phone=str(rowValues[6])[:-2],
                                          email=str(rowValues[7]))
                         userinfo.save()
                         classinfo = Classes(u_id=str(rowValues[0])[:-2], classes=str(rowValues[4])[:-2])
-                        dormitoryinfo = Dormitory(u_id=str(rowValues[0])[:-2], department=int(str(rowValues[5])[0:2]), room_id=str(rowValues[5])[-3:])
+                        dormitoryinfo = Dormitory(u_id=str(rowValues[0])[:-2], department=int(str(rowValues[5])[0:2]),
+                                                  room_id=str(rowValues[5])[-3:])
                         healthinfo = Healthcode(u_id=str(rowValues[0])[:-2], healthcode='green')
                         passphrase = Passphrase(u_id=str(rowValues[0])[:-2], passphrase='yes')
                         classinfo.save()
@@ -152,13 +155,21 @@ def excel_upload(request):
                         healthinfo.save()
                         passphrase.save()
             except Exception as e:
-                return HttpResponse('数据存在错误....')
+                messages.error(request, "数据存在错误....")
+                return HttpResponseRedirect(reverse('batch'))
+                # return HttpResponse('数据存在错误....')
 
-            return HttpResponse('上传成功')
+            messages.error(request, "上传成功")
+            return HttpResponseRedirect(reverse('batch'))
+            # return HttpResponse('上传成功')
 
-        return HttpResponse('上传文件格式不是xls')
+        messages.error(request, "上传文件格式不是xls")
+        return HttpResponseRedirect(reverse('batch'))
+        # return HttpResponse('上传文件格式不是xls')
 
-    return HttpResponse('不是post请求')
+    messages.error(request, "不是post请求")
+    return HttpResponseRedirect(reverse('batch'))
+    # return HttpResponse('不是post请求')
 
 
 def u_info(request, u_id):
@@ -184,24 +195,6 @@ def a_u_info(request):
     return render(request, 'a_u_info.html', {'data': t_info})
 
 
-def a_bed_check(request):
-    u_id = request.POST.get('id', '')
-    t_info = []
-    if u_id:
-        data = BackDailyClock.objects.filter(u_id=u_id).order_by('-c_time')
-        dor = Dormitory.objects.get(u_id=u_id)
-        for line in data:
-            l_info = [line.u, line.in_out, line.c_time, str(dor.department) + dor.room_id]
-            t_info.append(l_info)
-    else:
-        data = BackDailyClock.objects.all().order_by('-c_time')
-        for line in data:
-            dor = Dormitory.objects.get(u_id=line.u)
-            l_info = [line.u, line.in_out, line.c_time, str(dor.department) + dor.room_id]
-            t_info.append(l_info)
-    return render(request, 'a_bed_check.html', {'data': t_info})
-
-
 def a_day_clock(request):
     u_id = request.POST.get('id', '')
     t_info = []
@@ -222,8 +215,6 @@ def a_health_query(request):
     return render(request, 'a_health_query.html')
 
 
-
-
 def a_examine(request):
     u_id = request.POST.get('id', '')
     t_info = []
@@ -235,8 +226,8 @@ def a_examine(request):
             elif line.state == 2:
                 state = "不同意"
             else:
-                state="未审核"
-            l_info = {"id":line.id,"u_id":line.u_id, "a_id":line.a_id, "l_time":line.l_time, "states":state}
+                state = "未审核"
+            l_info = {"id": line.id, "u_id": line.u_id, "a_id": line.a_id, "l_time": line.l_time, "states": state}
             t_info.append(l_info)
             print(t_info)
     else:
@@ -246,13 +237,12 @@ def a_examine(request):
                 state = "同意"
             elif line.state == 2:
                 state = "不同意"
-            else :
+            else:
                 state = "未审核"
-            l_info = {"id":line.id,"u_id":line.u_id, "a_id":line.a_id, "l_time":line.l_time, "states":state}
+            l_info = {"id": line.id, "u_id": line.u_id, "a_id": line.a_id, "l_time": line.l_time, "states": state}
             t_info.append(l_info)
             print(t_info)
     return render(request, 'a_examine.html', {'data': t_info})
-
 
 
 def a_inout_query(request):
@@ -270,11 +260,10 @@ def a_inout_query(request):
     else:
         data = Iotable.objects.all()
         for line in data:
-            if line.in_out==1:
+            if line.in_out == 1:
                 in_out = "进"
             else:
                 in_out = "出"
             l_info = [line.u_id, in_out, line.io_time, line.door_id]
             t_info.append(l_info)
     return render(request, 'a_inout_query.html', {'data': t_info})
-

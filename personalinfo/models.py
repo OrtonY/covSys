@@ -17,16 +17,6 @@ class Admin(models.Model):
         db_table = 'admin'
 
 
-class BackDailyClock(models.Model):
-    u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    in_out = models.IntegerField(blank=True, null=True)
-    c_time = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'back_daily_clock'
-
-
 class Classes(models.Model):
     u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     classes = models.CharField(max_length=10, blank=True, null=True)
@@ -40,6 +30,7 @@ class DailyClock(models.Model):
     u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     temperature = models.FloatField(blank=True, null=True)
     qrcode = models.CharField(db_column='QRcode', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    emergency_person = models.CharField(max_length=20, blank=True, null=True)
     emergency_phone = models.CharField(max_length=20, blank=True, null=True)
     c_time = models.DateTimeField(blank=True, null=True)
 
@@ -69,9 +60,7 @@ class Healthcode(models.Model):
 
 class Interfacciami(models.Model):
     u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    in_time = models.DateTimeField(blank=True, null=True)
-    out_time = models.DateTimeField(blank=True, null=True)
-    l_time = models.IntegerField(blank=True, null=True)
+    reason = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -91,8 +80,8 @@ class Iotable(models.Model):
 
 class Judge(models.Model):
     u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    a = models.ForeignKey(Admin, models.DO_NOTHING, blank=True, null=True)
     l_time = models.IntegerField(blank=True, null=True)
+    reason = models.CharField(max_length=200, blank=True, null=True)
     state = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -121,9 +110,8 @@ class Passphrase(models.Model):
 
 class Quarantine(models.Model):
     u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    qrcode = models.CharField(db_column='QRcode', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    q_location = models.CharField(max_length=50, blank=True, null=True)
-    interval_time = models.IntegerField(blank=True, null=True)
+    q_location = models.CharField(max_length=200, blank=True, null=True)
+    cancel_time = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -132,9 +120,9 @@ class Quarantine(models.Model):
 
 class TQuarantine(models.Model):
     u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    qrcode = models.CharField(db_column='QRcode', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    q_location = models.CharField(max_length=50, blank=True, null=True)
-    q_time = models.DateTimeField(blank=True, null=True)
+    q_location = models.CharField(max_length=200, blank=True, null=True)
+    i_time = models.DateTimeField(blank=True, null=True)
+    o_time = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -143,7 +131,7 @@ class TQuarantine(models.Model):
 
 class USchedule(models.Model):
     u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    location = models.CharField(max_length=50, blank=True, null=True)
+    location = models.CharField(max_length=200, blank=True, null=True)
     o_time = models.DateTimeField(blank=True, null=True)
 
     class Meta:

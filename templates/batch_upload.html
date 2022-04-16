@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <title>批量上传数据</title>
 </head>
+<a href="{% url 'a_return' %}">返回</a>
 <body>
     <form action="{% url 'batch_upload' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="file" name="my_file">
         <input type="submit">
     </form>
+{% if messages %}
+<script>
+    {% for msg in messages %}
+        alert('{{ msg.message }}');
+    {% endfor %}
+</script>
+{% endif %}
 </body>
 </html>
