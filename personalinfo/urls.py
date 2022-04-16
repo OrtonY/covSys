@@ -20,4 +20,5 @@ urlpatterns = [
     path('a_day_clock/', views.a_day_clock, name="a_day_clock"),
     path('a_health_query/', views.a_health_query, name="a_health_query"),
     path('a_inout_query/', views.a_inout_query, name="a_inout_query"),
+    path('a_examine/', views.a_examine, name="a_examine"),
 ]
