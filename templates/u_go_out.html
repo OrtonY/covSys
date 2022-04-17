@@ -6,6 +6,23 @@
 </head>
 <body>
 <a href="{% url 'u_return' id%}">返回</a>
-
+<table id="go_out">
+        <tr>学号</tr>
+        <br>
+        <tr>出校时间</tr>
+        <br>
+        <tr>外出地点</tr>
+        <br>
+        <tr>通行码状态</tr>
+        <div id="upload" style="text-align: left">
+            <form method="post" enctype="" id="file_upload">
+            <img id="image-preview">
+            <p>
+            <input type="file" id="file" name="upload_image" accept="image/gif, image/jpeg, image/png, image/jpg">
+            </p>
+            <p id="info"></p>
+            </form>
+        </div>
+    </table>
 </body>
 </html>

@@ -6,8 +6,13 @@
 </head>
 <body>
 <a href="{% url 'u_return' id%}">返回</a>
-<style>
-
-</style>
+<script language="JavaScript" type="text/javascript">
+        tips = new Array(2);
+        tips[0] = '<a><img src="../static/picture/1.jpg" ></a>';
+        tips[1] = '<a><img src="../static/picture/2.jpg" ></a>';
+        index = Math.floor(Math.random() * tips.length);
+        document.write(tips[index]);
+        </script>
+        <meta http-equiv="refresh" content="5">
 </body>
 </html>
