@@ -268,3 +268,34 @@ def a_inout_query(request):
             l_info = [line.u_id, in_out, line.io_time, line.door_id]
             t_info.append(l_info)
     return render(request, 'a_inout_query.html', {'data': t_info})
+
+
+def u_schedul(request, u_id):
+    value = {'id': u_id}
+    return render(request, 'u_schedul.html', context=value)
+
+
+def u_passphrase(request, u_id):
+    value = {'id': u_id}
+    return render(request, 'u_passphrase.html', context=value)
+
+
+def u_go_out(request, u_id):
+    value = {'id': u_id}
+    return render(request, 'u_go_out.html', context=value)
+
+
+def u_covid_test(request, u_id):
+    value = {'id': u_id}
+    return render(request, 'u_covid_test.html', context=value)
+
+
+def u_daycard(request, u_id):
+    value = {'id': u_id}
+    return render(request, 'u_daycard.html', context=value)
+
+
+def u_quarantine_situtation(request, u_id):
+    value = {'id': u_id}
+    return render(request, 'u_quarantine_situtation.html', context=value)
+

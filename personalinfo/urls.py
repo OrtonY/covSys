@@ -21,4 +21,10 @@ urlpatterns = [
     path('a_examine/', views.a_examine, name="a_examine"),
     path('to_a_f_examine/<str:l_id>', views.to_a_f_examine, name="to_a_f_examine"),
     path('a_f_examine/<str:l_id>', views.a_f_examine, name="a_f_examine"),
+    path('u_schedul/<str:u_id>', views.u_schedul, name='u_schedul'),
+    path('u_passphrase/<str:u_id>', views.u_passphrase, name="u_passphrase"),
+    path('u_go_out/<str:u_id>', views.u_go_out, name="u_go_out"),
+    path('u_covid_test/<str:u_id>', views.u_covid_test, name="u_covid_test"),
+    path('u_daycard/<str:u_id>', views.u_daycard, name="u_daycard"),
+    path('u_quarantine_situtation/<str:u_id>', views.u_quarantine_situtation, name="u_quarantine_situtation"),
 ]
