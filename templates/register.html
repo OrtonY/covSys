@@ -18,5 +18,12 @@
     <p><label>邮箱</label><input type="text" name="email"></p>
     <p><input type="submit" id="submit" value="注册"></p>
 </form>
+{% if messages %}
+<script>
+    {% for msg in messages %}
+        alert('{{ msg.message }}');
+    {% endfor %}
+</script>
+{% endif %}
 </body>
 </html>

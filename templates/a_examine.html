@@ -19,16 +19,15 @@
   <tr>
     <th>申请编号</th>
     <th>学号</th>
-    <th>审批管理员</th>
     <th>申请时间</th>
+    <th>原因</th>
     <th>状态</th>
-    <th>操作</th>
     {% for line in data %}
     <tr>
-        <td width="92" class="nav" ><a href='{% url 'u_info' line.u_id %}' >{{ line.id }}</a></td>
+        <td width="92" class="nav" ><a href='{% url 'to_a_f_examine' line.id %}' >{{ line.id }}</a></td>
         <td>{{ line.u_id }}</td>
-        <td>{{ line.a_id }}</td>
         <td>{{ line.l_time }}</td>
+        <td>{{ line.reason }}</td>
         <td>{{ line.states }}</td>
     </tr>
     {% endfor %}

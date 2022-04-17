@@ -20,4 +20,6 @@ urlpatterns = [
     path('a_health_query/', views.a_health_query, name="a_health_query"),
     path('a_inout_query/', views.a_inout_query, name="a_inout_query"),
     path('a_examine/', views.a_examine, name="a_examine"),
+    path('to_a_f_examine/<str:l_id>', views.to_a_f_examine, name="to_a_f_examine"),
+    path('a_f_examine/<str:l_id>', views.a_f_examine, name="a_f_examine"),
 ]

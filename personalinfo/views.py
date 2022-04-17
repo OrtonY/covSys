@@ -102,11 +102,17 @@ def Register(request):
                 # return HttpResponse("注册成功,你的id为{}".format(r_id))
                 return render(request, 'u_login.html', context=value)
             else:
-                return HttpResponse("该用户已存在，请重新注册")
+                messages.error(request, "该用户已存在，请重新注册")
+                return HttpResponseRedirect(reverse('to_Register'))
+                # return HttpResponse("该用户已存在，请重新注册")
         else:
-            return HttpResponse("请输入完整信息")
+            messages.error(request, "请输入完整信息")
+            return HttpResponseRedirect(reverse('to_Register'))
+            # return HttpResponse("请输入完整信息")
     except:
-        return HttpResponse("系统目前出现故障，请稍后重试")
+        messages.error(request, "系统目前出现故障，请稍后重试")
+        return HttpResponseRedirect(reverse('to_Register'))
+        # return HttpResponse("系统目前出现故障，请稍后重试")
 
 
 def u_return(request, u_id):
@@ -219,30 +225,29 @@ def a_examine(request):
     u_id = request.POST.get('id', '')
     t_info = []
     if u_id:
-        data = Judge.objects.filter(u_id=u_id).order_by('-io_time')
-        for line in data:
-            if line.state == 1:
-                state = "同意"
-            elif line.state == 2:
-                state = "不同意"
-            else:
-                state = "未审核"
-            l_info = {"id": line.id, "u_id": line.u_id, "a_id": line.a_id, "l_time": line.l_time, "states": state}
-            t_info.append(l_info)
-            print(t_info)
+        data = Judge.objects.filter(u_id=u_id).order_by('-id')
     else:
-        data = Judge.objects.all()
-        for line in data:
-            if line.state == 1:
-                state = "同意"
-            elif line.state == 2:
-                state = "不同意"
-            else:
-                state = "未审核"
-            l_info = {"id": line.id, "u_id": line.u_id, "a_id": line.a_id, "l_time": line.l_time, "states": state}
-            t_info.append(l_info)
-            print(t_info)
+        data = Judge.objects.all().order_by('-id')
+    for line in data:
+        if line.state == 1:
+            state = "同意"
+        elif line.state == 2:
+            state = "不同意"
+        else:
+            state = "未审核"
+        l_info = {"id": line.id, "u_id": line.u_id, "l_time": line.l_time, "reason": line.reason, "states": state}
+        t_info.append(l_info)
     return render(request, 'a_examine.html', {'data': t_info})
+
+
+def to_a_f_examine(request, l_id):
+    return render(request, 'a_f_examine.html', {'l_id': l_id})
+
+
+def a_f_examine(request, l_id):
+    state = request.POST.get('state', '')
+    Judge.objects.filter(id=l_id).update(state=state)
+    return HttpResponseRedirect(reverse('a_examine'))
 
 
 def a_inout_query(request):
