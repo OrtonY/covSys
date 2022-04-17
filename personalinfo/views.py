@@ -217,10 +217,6 @@ def a_day_clock(request):
     return render(request, 'a_day_clock.html', {'data': t_info})
 
 
-def a_health_query(request):
-    return render(request, 'a_health_query.html')
-
-
 def a_examine(request):
     u_id = request.POST.get('id', '')
     t_info = []
