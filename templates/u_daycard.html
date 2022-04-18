@@ -6,6 +6,28 @@
 </head>
 <body>
 <a href="{% url 'u_return' id%}">返回</a>
-
+<br><br>
+<form action="{% url 'daycard' id %}" method="post" id="daycard">
+    {% csrf_token %}
+        <label>打卡时间：</label>
+        <br>{{ time }}<br>
+        <label>学号：</label>
+        <br>{{ id }}<br>
+        <label>健康码：</label>
+        <br>{{ code }}<br>
+        <label>体温:<input type="text" name="temp"></label>
+        <br><br>
+        <label>紧急联络人：<input type="text" name="en"></label>
+        <br><br>
+        <label>紧急联络人手机号：<input type="text" name="ep"></label>
+        <br><br>
+        <button  onclick="login()">提交</button>
+</form>
+<script>
+    function login()
+    {
+        document.getElementById('daycard').submit()
+    }
+</script>
 </body>
 </html>

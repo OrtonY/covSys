@@ -6,7 +6,7 @@
 </head>
 <body>
 <a href="{% url 'u_return' id%}">返回</a>
-<table id="infomation">
+<table id="infomation1">
     <tr><th>我</th></tr>
     <tr><td>姓名:{{ name }}</td></tr>
     <tr><td>学号:{{ id }}</td></tr>
@@ -16,6 +16,35 @@
     <tr><td>宿舍:{{ dor }}</td></tr>
     <tr><td>手机号:{{ phone }}</td></tr>
     <tr><td>邮箱:{{ email }}</td></tr>
+</table>
+<table id="information2">
+    <tr>最近一次外出审批情况</tr>
+    <br><br>
+    <tr>审批状况：</tr><tr>{{ j1 }}</tr>
+    <tr>审批时长：</tr><tr>{{ j2 }}小时</tr>
+    <tr>用户状态：</tr><tr>{{ j3 }}</tr>
+    <br><br>
+    <tr>违规详情</tr><tr>{{ interfacciami }}</tr>
+    <br><br>
+    <tr>健康码：</tr><tr>{{ code }}</tr>
+    <br><br>
+    <tr>隔离地点：</tr><tr>{{ q1 }}</tr>
+    <tr>结束时间：</tr><tr>{{ q2 }}</tr>
+</table>
+<table id="information3">
+    {% if passphrase == "yes" %}
+        <script language="JavaScript" type="text/javascript">
+            tips = new Array(2);
+            tips[0] = '<a><img src="../static/picture/1.jpg" ></a>';
+            tips[1] = '<a><img src="../static/picture/2.jpg" ></a>';
+            index = Math.floor(Math.random() * tips.length);
+            document.write(tips[index]);
+        </script>
+            <meta http-equiv="refresh" content="5">
+            <!-- 区块刷新 -->
+        {% else %}
+        <td width="92" class="nav" >尚无，请联系管理员</td>
+    {% endif %}
 </table>
 <style type="text/css">
     tr{

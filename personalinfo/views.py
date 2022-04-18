@@ -182,8 +182,43 @@ def u_info(request, u_id):
     data = Users.objects.get(u_id=u_id)
     cla = Classes.objects.get(u__u_id=u_id)
     dor = Dormitory.objects.get(u__u_id=u_id)
+    judge = Judge.objects.filter(u_id=u_id).order_by('-id')
+    interfacciami = Interfacciami.objects.filter(u_id=u_id).count()
+    quarantine = Quarantine.objects.filter(u_id=u_id)
+    passphrase = Passphrase.objects.get(u_id=u_id)
+    o_code = Healthcode.objects.get(u_id=u_id)
+    code = o_code.healthcode
+    if code == "green":
+        code = "绿码"
+    elif code == "yellow":
+        code = "黄码"
+    else:
+        code = "红码"
+    state = ""
+    situation = ""
+    l_time = ""
+    for line in judge:
+        if line.state == 1:
+            state = "同意"
+        elif line.state == 2:
+            state = "不同意"
+        else:
+            state = "未审核"
+        if line.situation == 0:
+            situation = "未出门"
+        else:
+            situation = "已过期"
+        l_time = line.l_time
+        break
+    q1 = "暂时无隔离数据"
+    q2 = "暂时无隔离数据"
+    for line in quarantine:
+        q1 = line.q_location
+        q2 = line.cancel_time
+        break
+
     value = {'id': u_id, 'name': data.u_name, 'identity': data.identity, 'phone': data.phone, 'email': data.email,
-             'year': u_id[:4], 'class': cla.classes, 'dor': str(dor.department) + dor.room_id}
+             'year': u_id[:4], 'class': cla.classes, 'dor': str(dor.department) + dor.room_id, 'j1': state, 'j2':l_time, 'j3': situation, 'interfacciami': interfacciami, 'code': code, 'q1': q1, 'q2': q2, 'passphrase': passphrase.passphrase}
     return render(request, 'u_information.html', context=value)
 
 
@@ -231,7 +266,11 @@ def a_examine(request):
             state = "不同意"
         else:
             state = "未审核"
-        l_info = {"id": line.id, "u_id": line.u_id, "l_time": line.l_time, "reason": line.reason, "states": state}
+        if line.situation == 0:
+            situation = "未出门"
+        else:
+            situation = "已过期"
+        l_info = {"id": line.id, "u_id": line.u_id, "l_time": line.l_time, "reason": line.reason, "states": state, "situation": situation}
         t_info.append(l_info)
     return render(request, 'a_examine.html', {'data': t_info})
 
@@ -270,14 +309,23 @@ def a_inout_query(request):
     return render(request, 'a_inout_query.html', {'data': t_info})
 
 
-def u_schedul(request, u_id):
-    value = {'id': u_id}
+def to_u_schedul(request, u_id):
+    time = get_now_time()
+    value = {'id': u_id, 'time': time}
     return render(request, 'u_schedul.html', context=value)
 
 
-def u_passphrase(request, u_id):
-    value = {'id': u_id}
-    return render(request, 'u_passphrase.html', context=value)
+def u_schedul(request, u_id):
+    time = get_now_time()
+    p = request.POST.get('province', '')
+    c = request.POST.get('city', '')
+    d = request.POST.get('district', '')
+    l = request.POST.get('location', '')
+    schedule = USchedule(u_id=u_id, location=p+c+d+l, o_time=time)
+    schedule.save()
+    data = Users.objects.get(u_id=u_id)
+    value = {"id": data.u_id, "name": data.u_name, "identity": data.identity}
+    return render(request, 'u_navigation.html', context=value)
 
 
 def to_u_go_out(request, u_id):
@@ -310,14 +358,33 @@ def u_covid_test(request, u_id):
     return render(request, 'u_navigation.html', context=value)
 
 
-def u_daycard(request, u_id):
-    value = {'id': u_id}
+def to_u_daycard(request, u_id):
+    time = get_now_time()
+    data = Healthcode.objects.get(u_id=u_id)
+    code = data.healthcode
+    if code == "green":
+        code = "绿码"
+    elif code == "yellow":
+        code = "黄码"
+    else:
+        code = "红码"
+    value = {'id': u_id, 'time': time, 'code': code}
     return render(request, 'u_daycard.html', context=value)
 
 
-def u_quarantine_situtation(request, u_id):
-    value = {'id': u_id}
-    return render(request, 'u_quarantine_situtation.html', context=value)
+def u_daycard(request, u_id):
+    time = get_now_time()
+    temperature = request.POST.get('temp', '')
+    emergency_person = request.POST.get('en', '')
+    emergency_phone = request.POST.get('ep', '')
+    data = Healthcode.objects.get(u_id=u_id)
+    code = data.healthcode
+    daycard = DailyClock(u_id=u_id, temperature=float(temperature), emergency_person=emergency_person, emergency_phone=emergency_phone, c_time=time, qrcode=code)
+    daycard.save()
+    data = Users.objects.get(u_id=u_id)
+    value = {"id": data.u_id, "name": data.u_name, "identity": data.identity}
+    return render(request, 'u_navigation.html', context=value)
+
 
 
 def get_now_time():
