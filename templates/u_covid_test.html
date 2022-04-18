@@ -8,7 +8,8 @@
 <a href="{% url 'u_return' id%}">返回</a>
 <h1 align="center">核酸检测上传</h1>
 <div id="upload" style="text-align: center">
-    <form method="post" enctype="" id="file_upload">
+    <form action="{% url 'covid_test' id %}" method="post" enctype="" id="file_upload" name="submit">
+        {% csrf_token %}
     ----enctype 里面上传到其他网站----
 	<p>图片预览：</p>
 	<img id="image-preview">
@@ -16,10 +17,16 @@
 	<input type="file" id="file" name="upload_image" accept="image/gif, image/jpeg, image/png, image/jpg">
 	</p>
     <p id="info"></p>
-</form>
-</div>
-<style type="text/css">
-
-</style>
+    <label style="vertical-align: middel;"><input type="radio" name="value" value="0" >阴性</label>
+    <label style="vertical-align: middel;"><input type="radio" name="value" value="1" >阳性</label>
+    <br>
+    <button  onclick="login()">提交</button>
+    </form>
+    <script>
+        function login()
+        {
+            document.getElementById('file_upload').submit()
+        }
+    </script>
 </body>
 </html>

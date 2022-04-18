@@ -116,6 +116,7 @@ u_id varchar(20),
 l_time int,
 reason varchar(200),
 state boolean,
+situation boolean,
 FOREIGN KEY(u_id) references users (u_id)
 )ENGINE=InnoDB;
 

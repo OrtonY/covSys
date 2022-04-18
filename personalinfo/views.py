@@ -280,14 +280,34 @@ def u_passphrase(request, u_id):
     return render(request, 'u_passphrase.html', context=value)
 
 
-def u_go_out(request, u_id):
+def to_u_go_out(request, u_id):
     value = {'id': u_id}
     return render(request, 'u_go_out.html', context=value)
 
 
-def u_covid_test(request, u_id):
+def u_go_out(request, u_id):
+    time = request.POST.get('time', '')
+    reason = request.POST.get('reason', '')
+    judge = Judge(u_id=u_id, l_time=int(time), reason=reason, state=0, situation=0)
+    judge.save()
+    data = Users.objects.get(u_id=u_id)
+    value = {"id": data.u_id, "name": data.u_name, "identity": data.identity}
+    return render(request, 'u_navigation.html', context=value)
+
+
+def to_u_covid_test(request, u_id):
     value = {'id': u_id}
     return render(request, 'u_covid_test.html', context=value)
+
+
+def u_covid_test(request, u_id):
+    result = request.POST.get('value', '')
+    time = get_now_time()
+    cov_test = NucleicAcid(u_id=u_id, t_time=time, result=result)
+    cov_test.save()
+    data = Users.objects.get(u_id=u_id)
+    value = {"id": data.u_id, "name": data.u_name, "identity": data.identity}
+    return render(request, 'u_navigation.html', context=value)
 
 
 def u_daycard(request, u_id):
@@ -298,4 +318,15 @@ def u_daycard(request, u_id):
 def u_quarantine_situtation(request, u_id):
     value = {'id': u_id}
     return render(request, 'u_quarantine_situtation.html', context=value)
+
+
+def get_now_time():
+    from django.utils import timezone
+    import pytz
+    import datetime
+    tz = pytz.timezone('Asia/Shanghai')
+
+    now_time = timezone.now().astimezone(tz=tz).strftime("%Y-%m-%d %H:%M:%S")
+    now = datetime.datetime.strptime(now_time, '%Y-%m-%d %H:%M:%S')
+    return now
 

@@ -83,6 +83,7 @@ class Judge(models.Model):
     l_time = models.IntegerField(blank=True, null=True)
     reason = models.CharField(max_length=200, blank=True, null=True)
     state = models.IntegerField(blank=True, null=True)
+    situation = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
