@@ -9,12 +9,13 @@
 <h3>
     欢迎{{ id }} 管理员登入校园疫情防控信息管理系统
     <h1><a href="{% url "batch" %}">批量上传</a></h1>
-    <p><a href="{% url 'a_day_clock' %}">学生健康申报内容查询</a></p>
+    <p><a href="{% url 'a_dayclock_info' %}">当日打卡</a></p>
     <p><a href="{% url 'a_inout_query' %}">进出校查询</a></p>
     <p><a href="{% url 'a_u_info' %}">学生信息查询</a></p>
     <p><a href="{% url 'a_examine' %}">外出审批</a></p>
-    <p><a href="{% url 'logout' %}">隔离地点上传</a></p>
-    <p><a href="{% url 'logout' %}">隔离信息查询</a></p>
+    <p><a href="{% url 'to_a_quarantine_up' %}">隔离地点上传</a></p>
+    <p><a href="{% url 'a_quarantine_info' %}">隔离信息查询</a></p>
+    <p><a href="{% url 'a_t_quarantine' %}">隔离记录表</a></p>
     <p><a href="{% url 'logout' %}">通行码修改</a></p>
     <p><a href="{% url 'logout' %}">红码人员恢复</a></p>
     <p><a href="{% url 'logout' %}">疫情地点</a></p>

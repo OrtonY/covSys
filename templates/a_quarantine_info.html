@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>隔离信息查询</title>
+</head>
+<body>
+<a href="{% url 'a_return' %}">返回</a>
+
+
+   <form action="/a_quarantine_info/" method="post">
+        {% csrf_token %}
+        <p><label>请输入需查询的学生学号</label></p>
+        <p><label>学号</label><input type="text" name="id"></p>
+        <input type="submit" value="查询">
+   </form>
+
+
+<table width="400" border="1" cellpadding="10">
+  <tr>
+    <th>学号</th>
+    <th>隔离地点</th>
+    <th>解除时间</th>
+  </tr>
+    {% for line in data %}
+    <tr>
+
+        <td>{{ line.u_id }}</td>
+        <td>{{ line.q_location }}</td>
+     <td>{{ line.cancel_time }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

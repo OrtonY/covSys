@@ -1,5 +1,8 @@
+import datetime
+
 import xlrd
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -218,7 +221,9 @@ def u_info(request, u_id):
         break
 
     value = {'id': u_id, 'name': data.u_name, 'identity': data.identity, 'phone': data.phone, 'email': data.email,
-             'year': u_id[:4], 'class': cla.classes, 'dor': str(dor.department) + dor.room_id, 'j1': state, 'j2':l_time, 'j3': situation, 'interfacciami': interfacciami, 'code': code, 'q1': q1, 'q2': q2, 'passphrase': passphrase.passphrase}
+             'year': u_id[:4], 'class': cla.classes, 'dor': str(dor.department) + dor.room_id, 'j1': state,
+             'j2': l_time, 'j3': situation, 'interfacciami': interfacciami, 'code': code, 'q1': q1, 'q2': q2,
+             'passphrase': passphrase.passphrase}
     return render(request, 'u_information.html', context=value)
 
 
@@ -236,18 +241,44 @@ def a_u_info(request):
     return render(request, 'a_u_info.html', {'data': t_info})
 
 
-def a_day_clock(request):
+def a_dayclock_info(request):
     u_id = request.POST.get('id', '')
+    t_info = []
+    t_year=datetime.date.today().year
+    t_month = datetime.date.today().month
+    t_day = datetime.date.today().day
+    if u_id:
+        data = DailyClock.objects.filter(u_id=u_id).order_by('c_time')
+    else:
+        data = DailyClock.objects.all().order_by('c_time')
+    for line in data:
+        date_time = line.c_time
+        c_year = date_time.year
+        c_month = date_time.month
+        c_day = date_time.day
+        if c_year == t_year and c_month == t_month and c_day == t_day:
+            situation = "已打卡"
+            clock_time = line.c_time
+        else:
+            situation = "未打卡"
+            clock_time = "无"
+        l_info = {"u_id": line.u_id, "situation": situation, "c_time": clock_time, }
+        t_info.append(l_info)
+    return render(request, "a_dayclock_info.html",{'data': t_info})
+
+
+def a_day_clock(request,u_id):
+
     t_info = []
     if u_id:
         data = DailyClock.objects.filter(u_id=u_id).order_by('id')
         for line in data:
-            l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone]
+            l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone,line.c_time]
             t_info.append(l_info)
     else:
         data = DailyClock.objects.all()
         for line in data:
-            l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone]
+            l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone,line.c_time]
             t_info.append(l_info)
     return render(request, 'a_day_clock.html', {'data': t_info})
 
@@ -270,9 +301,49 @@ def a_examine(request):
             situation = "未出门"
         else:
             situation = "已过期"
-        l_info = {"id": line.id, "u_id": line.u_id, "l_time": line.l_time, "reason": line.reason, "states": state, "situation": situation}
+        l_info = {"id": line.id, "u_id": line.u_id, "l_time": line.l_time, "reason": line.reason, "states": state,
+                  "situation": situation}
         t_info.append(l_info)
     return render(request, 'a_examine.html', {'data': t_info})
+
+
+def a_quarantine_info(request):
+    u_id = request.POST.get('id', '')
+    t_info = []
+    if u_id:
+        data = Quarantine.objects.filter(u_id=u_id).order_by('-id')
+    else:
+        data = Quarantine.objects.all().order_by('-id')
+    for line in data:
+
+        l_info = { "u_id": line.u_id, "q_location": line.q_location ,"cancel_time": line.cancel_time,}
+        t_info.append(l_info)
+    return render(request, 'a_quarantine_info.html', {'data': t_info})
+
+
+def a_t_quarantine(request):
+    u_id = request.POST.get('id', '')
+    t_info = []
+    if u_id:
+        data = TQuarantine.objects.filter(u_id=u_id).order_by('-id')
+    else:
+        data = TQuarantine.objects.all().order_by('-id')
+    for line in data:
+        l_info = { "u_id": line.u_id, "q_location": line.q_location ,"i_time": line.i_time,"o_time":line.o_time}
+        t_info.append(l_info)
+    return render(request, 'a_t_quarantine.html', {'data': t_info})
+
+
+def to_a_quarantine_up(request):
+    return render(request, 'a_quarantine_up.html')
+
+
+def a_quarantine_up(request):
+    u_id = request.POST.get('u_id', '')
+    q_location = request.POST.get('q_location', '')
+    cancel_time = request.POST.get('cancel_time')
+    Quarantine.objects.create(u_id=u_id,q_location=q_location,cancel_time=cancel_time)
+    return HttpResponseRedirect(reverse('a_quarantine_up'))
 
 
 def to_a_f_examine(request, l_id):
@@ -321,7 +392,7 @@ def u_schedul(request, u_id):
     c = request.POST.get('city', '')
     d = request.POST.get('district', '')
     l = request.POST.get('location', '')
-    schedule = USchedule(u_id=u_id, location=p+c+d+l, o_time=time)
+    schedule = USchedule(u_id=u_id, location=p + c + d + l, o_time=time)
     schedule.save()
     data = Users.objects.get(u_id=u_id)
     value = {"id": data.u_id, "name": data.u_name, "identity": data.identity}
@@ -362,14 +433,18 @@ def to_u_daycard(request, u_id):
     time = get_now_time()
     data = Healthcode.objects.get(u_id=u_id)
     code = data.healthcode
-    b_time = DailyClock.objects.filter(u_id=u_id).order_by('-id')[0].c_time
+    b_time = DailyClock.objects.filter(u_id=u_id).order_by('-id')
+    be_time = ""
+    for line in b_time:
+        be_time = line.c_time
+        break
     if code == "green":
         code = "绿码"
     elif code == "yellow":
         code = "黄码"
     else:
         code = "红码"
-    value = {'id': u_id, 'time': time, 'code': code, 'b_time': b_time}
+    value = {'id': u_id, 'time': time, 'code': code, 'b_time': be_time}
     return render(request, 'u_daycard.html', context=value)
 
 
@@ -380,10 +455,29 @@ def u_daycard(request, u_id):
     emergency_phone = request.POST.get('ep', '')
     data = Healthcode.objects.get(u_id=u_id)
     code = data.healthcode
-    daycard = DailyClock(u_id=u_id, temperature=float(temperature), emergency_person=emergency_person, emergency_phone=emergency_phone, c_time=time, qrcode=code)
-    daycard.save()
     data = Users.objects.get(u_id=u_id)
-    value = {"id": data.u_id, "name": data.u_name, "identity": data.identity}
+    b_time = DailyClock.objects.filter(u_id=u_id).order_by('-id')
+    be_time = ""
+    for line in b_time:
+        be_time = line.c_time
+        break
+    if code == "green":
+        code = "绿码"
+    elif code == "yellow":
+        code = "黄码"
+    else:
+        code = "红码"
+    value = {"id": data.u_id, "name": data.u_name, "identity": data.identity, 'time': time, 'code': code,
+             'b_time': be_time}
+    if str(time)[:10] == str(be_time)[:10]:
+        messages.error(request, "您今天已完成打卡，请勿重复打卡")
+        return render(request, 'u_daycard.html', context=value)
+    else:
+        code = data.healthcode
+        daycard = DailyClock(u_id=u_id, temperature=float(temperature), emergency_person=emergency_person,
+                             emergency_phone=emergency_phone, c_time=time, qrcode=code)
+        daycard.save()
+
     return render(request, 'u_navigation.html', context=value)
 
 
@@ -443,3 +537,41 @@ def get_now_time():
     now = datetime.datetime.strptime(now_time, '%Y-%m-%d %H:%M:%S')
     return now
 
+
+def monitor(request):
+    # 监测出入校门
+    now_time = get_now_time()
+    io_date = Iotable.objects.filter(state=0)
+    for line1 in io_date:
+        start = datetime.datetime.strptime(str(now_time), "%Y-%m-%d %H:%M:%S")
+        end = datetime.datetime.strptime(str(line1.io_time)[:-6], "%Y-%m-%d %H:%M:%S")
+        detail_time = end - start
+        print(detail_time)
+        days = (end - start).days
+        hours = str(detail_time).split(',')[1].split(':')[0].replace(' ', '')
+        minutes = str(detail_time).split(',')[1].split(':')[1]
+        real_hours = -(days * 24 + int(hours) + float(int(minutes)/60))
+        judge = Judge.objects.filter(state=1, situation=0, u_id=line1.u_id)
+        j_hours = 2
+        for line2 in judge:
+            j_hours = line2.l_time
+        print(j_hours, real_hours)
+        if real_hours == j_hours:
+            name = Users.objects.get(u_id=line1.u_id).u_name
+            identity = Users.objects.get(u_id=line1.u_id).identity
+            mail = Users.objects.get(u_id=line1.u_id).email
+            content = "{}{}，您出校已超过规定时间，目前您的通行码被停用，请及时联系管理员！".format(name, identity)
+            send_email(content=content, email=mail)
+            Passphrase.objects.filter(u_id=line1.u_id).update(passphrase="no")
+        Judge.objects.filter(state=1, situation=0, u_id=line1.u_id).update(situation=1)
+
+    return 0
+
+
+def send_email(content, email):
+    # 值1：  邮件标题   值2： 邮件主体
+    # 值3： 发件人      值4： 收件人
+    send_mail('防疫系统提示',
+              content,
+              '2477911988@qq.com',
+              [email])

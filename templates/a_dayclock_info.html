@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>打卡情况</title>
+</head>
+<body>
+<a href="{% url 'a_return' %}">返回</a>
+   <form action="/a_dayclock_info/" method="post">
+        {% csrf_token %}
+        <p><label>请输入需查询的学生学号</label></p>
+        <p><label>学号</label><input type="text" name="id"></p>
+        <input type="submit" value="查询">
+    </form>
+<table width="400" border="1" cellpadding="10">
+  <tr>
+    <th>学号</th>
+    <th>是否打卡</th>
+    <th>打卡时间</th>
+  </tr>
+    {% for line in data %}
+    <tr>
+    <td width="92" class="nav" ><a href='{% url 'a_day_clock' line.u_id %}' >{{ line.u_id }}</a></td>
+        <td>{{ line.situation }}</td>
+        <td>{{ line.c_time }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+</body>
+
+<style>
+.nav a {
+        display:block; /* 把行内元素 变成 块级元素 */
+        width:92px; /* 盒子 宽度 与td宽度一致*/
+        height:37px; /* 盒子 高度与td高度一致 */
+        text-decoration: none;
+        vertical-align: middle;/* 使a的文本垂直居中 */
+
+    }
+
+.nav{
+ background: #ffffff;
+width:92px;
+ text-align: center;     /* 使a的文本水平居中 */
+ white-space:nowrap;
+color:#000000;
+cursor:pointer;
+line-height:37px; /* 使a的文本垂直居中 要与a标签的高度一致 */
+}
+</style>
+</html>

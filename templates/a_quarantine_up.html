@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>隔离情况上传</title>
+</head>
+<body>
+<a href="{% url 'a_return' %}">返回</a>
+    <form action="{% url 'a_quarantine_up'  %}" method="post">
+      {% csrf_token %}
+        <p><label>学号</label><input type="text" name="u_id"></p>
+        <p><label>隔离地点</label><input type="text" name="q_location"></p>
+        <p><label>解除时间</label><input type="datetime" name="cancel_time"></p>
+        <input type="submit" value="提交">
+    </form>
+</body>
+</html>
