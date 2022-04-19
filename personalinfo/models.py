@@ -71,7 +71,8 @@ class Iotable(models.Model):
     u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     in_out = models.IntegerField(blank=True, null=True)
     io_time = models.DateTimeField(blank=True, null=True)
-    door_id = models.IntegerField(blank=True, null=True)
+    door_id = models.CharField(max_length=20, blank=True, null=True)
+    state = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False

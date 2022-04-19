@@ -56,7 +56,8 @@ id int auto_increment primary key,
 u_id varchar(20),
 in_out int,
 io_time datetime,
-door_id int,
+door_id varchar(20),
+state boolean,
 FOREIGN KEY(u_id) references users (u_id)
 )ENGINE=InnoDB;
 

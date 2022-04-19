@@ -362,13 +362,14 @@ def to_u_daycard(request, u_id):
     time = get_now_time()
     data = Healthcode.objects.get(u_id=u_id)
     code = data.healthcode
+    b_time = DailyClock.objects.filter(u_id=u_id).order_by('-id')[0].c_time
     if code == "green":
         code = "绿码"
     elif code == "yellow":
         code = "黄码"
     else:
         code = "红码"
-    value = {'id': u_id, 'time': time, 'code': code}
+    value = {'id': u_id, 'time': time, 'code': code, 'b_time': b_time}
     return render(request, 'u_daycard.html', context=value)
 
 
@@ -385,6 +386,51 @@ def u_daycard(request, u_id):
     value = {"id": data.u_id, "name": data.u_name, "identity": data.identity}
     return render(request, 'u_navigation.html', context=value)
 
+
+def to_u_inout_door(request, u_id):
+    time = get_now_time()
+    value = {'id': u_id, 'time': time}
+    return render(request, 'u_inout_door.html', context=value)
+
+
+def u_inout_door(request, u_id):
+    io = request.POST.get('i_o', '')
+    door = request.POST.get('door', '')
+    time = get_now_time()
+    data = Users.objects.get(u_id=u_id)
+    value = {"id": data.u_id, "name": data.u_name, "identity": data.identity, "time": time}
+    state = 1
+    if io == "出":
+        io = 0
+    else:
+        io = 1
+    date = Iotable.objects.filter(u_id=u_id).order_by('-id')
+    for line in date:
+        state = line.state
+        break
+    date = Passphrase.objects.get(u_id=u_id)
+    passphrase = date.passphrase
+    if passphrase == "yes":
+        if state == 1:
+            if io == 0:
+                iotable = Iotable(u_id=u_id, in_out=io, io_time=time, door_id=door, state=0)
+                iotable.save()
+                return render(request, 'u_navigation.html', context=value)
+            else:
+                messages.error(request, "您还未出门")
+                return render(request, 'u_inout_door.html', context=value)
+        else:
+            if io == 0:
+                messages.error(request, "您已出门")
+                return render(request, 'u_inout_door.html', context=value)
+            else:
+                iotable = Iotable(u_id=u_id, in_out=io, io_time=time, door_id=door, state=1)
+                Iotable.objects.filter(u_id=u_id).update(state=1)
+                iotable.save()
+                return render(request, 'u_navigation.html', context=value)
+    else:
+        messages.error(request, "您目前没有通行码，无法出入校门")
+        return render(request, 'u_inout_door.html', context=value)
 
 
 def get_now_time():

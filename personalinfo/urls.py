@@ -29,4 +29,6 @@ urlpatterns = [
     path('covid_test/<str:u_id>', views.u_covid_test, name="covid_test"),
     path('u_daycard/<str:u_id>', views.to_u_daycard, name="u_daycard"),
     path('daycard/<str:u_id>', views.u_daycard, name="daycard"),
+    path('u_inout_door/<str:u_id>', views.to_u_inout_door, name="u_inout_door"),
+    path('inout_door/<str:u_id>', views.u_inout_door, name="inout_door"),
 ]

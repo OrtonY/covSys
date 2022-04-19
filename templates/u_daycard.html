@@ -9,6 +9,8 @@
 <br><br>
 <form action="{% url 'daycard' id %}" method="post" id="daycard">
     {% csrf_token %}
+        <label>上一次打卡时间</label>
+        <br>{{ b_time }}<br>
         <label>打卡时间：</label>
         <br>{{ time }}<br>
         <label>学号：</label>
