@@ -24,5 +24,5 @@ urlpatterns = [
     path('to_a_healthcode_up/', views.to_a_healthcode_up, name="to_a_healthcode_up"),
     path('a_healthcode_up/<str:l_id>', views.a_healthcode_up, name="a_healthcode_up"),
     path('to_a_covlocation_up/', views.to_a_covlocation_up, name="to_a_covlocation_up"),
-    path('a_covlocation_up/<str:l_id>', views.a_covlocation_up, name="a_covlocation_up"),
+    path('a_covlocation_up/', views.a_covlocation_up, name="a_covlocation_up"),
 ]

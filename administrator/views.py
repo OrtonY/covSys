@@ -194,7 +194,6 @@ def a_t_quarantine(request):
 
 def to_a_quarantine_up(request, u_id):
     value = {'id': u_id}
-
     return render(request, 'a_quarantine_up.html', context=value)
 
 
@@ -202,9 +201,10 @@ def to_a_quarantine_list_up(request):
     date = Healthcode.objects.filter(healthcode='yellow')
     t_info = []
     for line in date:
-        t_date = Quarantine.objects.get(u_id=line.u_id)
-        l_info = {'id': t_date.u_id, 'location': t_date.q_location, 'time': t_date.cancel_time}
-        t_info.append(l_info)
+        t_date = Quarantine.objects.filter(u_id=line.u_id)
+        for l_line in t_date:
+            l_info = {'id': l_line.u_id, 'location': l_line.q_location, 'time': l_line.cancel_time}
+            t_info.append(l_info)
     return render(request, 'a_quarantine_list_up.html', {'data': t_info})
 
 
@@ -255,30 +255,46 @@ def a_healthcode_up(request, l_id):
 
 
 def to_a_covlocation_up(request):
+    # p = request.POST.get('province', '')
+    # c = request.POST.get('city', '')
+    # d = request.POST.get('district', '')
+    # covlocation = p + c + d + "%%"
+    # t_info = []
+    # c_year = request.POST.get('year', '')
+    # c_month = request.POST.get('month', '')
+    # c_day = request.POST.get('day', '')
+    # print(c_year)
+    # data = USchedule.objects.raw("select * from u_schedule where location like %s", [covlocation])
+    # for line in data:
+    #     o_year = int(line.o_time.year)
+    #     o_month = int(line.o_time.month)
+    #     o_day = int(line.o_time.day)
+    #     if int(c_year) == o_year and int(c_month) == o_month and int(c_day) == o_day:
+    #         l_info = {"u_id": line.u_id, "covlocation": line.location, "o_time": line.o_time}
+    #         t_info.append(l_info)
+    # return render(request, 'a_covlocation_up.html', {'data': t_info})
+    return render(request, 'a_covlocation_up.html')
+
+
+def a_covlocation_up(request):
     p = request.POST.get('province', '')
     c = request.POST.get('city', '')
     d = request.POST.get('district', '')
-    covlocation = p + c + d
-    t_info = []
-
-    c_year = request.POST.get('year')
-    c_month = request.POST.get('month')
-    c_day = request.POST.get('day')
-    data = USchedule.objects.filter(location=covlocation)
+    covlocation = p + c + d + "%%"
+    c_year = request.POST.get('year', '')
+    c_month = request.POST.get('month', '')
+    c_day = request.POST.get('day', '')
+    data = USchedule.objects.raw("select * from u_schedule where location like %s", [covlocation])
     for line in data:
         o_year = int(line.o_time.year)
         o_month = int(line.o_time.month)
         o_day = int(line.o_time.day)
-        print(type(line.o_time.year))
         if int(c_year) == o_year and int(c_month) == o_month and int(c_day) == o_day:
-            l_info = {"u_id": line.u_id, "covlocation": line.location, "o_time": line.o_time}
-            t_info.append(l_info)
-    return render(request, 'a_covlocation_up.html', {'data': t_info})
-
-
-def a_covlocation_up(request, l_id):
-    Passphrase.objects.filter(u_id=l_id).update(passphrase='no')
-    Healthcode.objects.filter(u_id=l_id).update(healthcode='red')
+            Passphrase.objects.filter(u_id=line.u_id).update(passphrase='no')
+            Healthcode.objects.filter(u_id=line.u_id).update(healthcode='yellow')
+            count = Quarantine.objects.filter(u_id=line.u_id).count()
+            if count == 0:
+                Quarantine.objects.create(u_id=line.u_id, q_location='')
     return HttpResponseRedirect(reverse('to_a_covlocation_up'))
 
 
