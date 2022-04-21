@@ -1,13 +1,8 @@
 import datetime
-
-import xlrd
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-
-# Create your views here.
 from django.urls import reverse
 
 from personalinfo.models import *
@@ -107,7 +102,7 @@ def monitor(request):
     # 监测每日打卡
     now_time = get_now_time()
     now_time = datetime.datetime.strptime(str(now_time), "%Y-%m-%d %H:%M:%S")
-    if int(now_time.hour) == 21 and int(now_time.minute) == 38:
+    if int(now_time.hour) == 23 and int(now_time.minute) == 58:
         t_year = str(datetime.date.today().year).zfill(4)
         t_month = str(datetime.date.today().month).zfill(2)
         t_day = str(datetime.date.today().day).zfill(2)

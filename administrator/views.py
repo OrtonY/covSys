@@ -1,3 +1,5 @@
+import xlrd
+from django.db import transaction
 from personalinfo.views import *
 
 
@@ -190,15 +192,26 @@ def a_t_quarantine(request):
     return render(request, 'a_t_quarantine.html', {'data': t_info})
 
 
-def to_a_quarantine_up(request):
-    return render(request, 'a_quarantine_up.html')
+def to_a_quarantine_up(request, u_id):
+    value = {'id': u_id}
+
+    return render(request, 'a_quarantine_up.html', context=value)
 
 
-def a_quarantine_up(request):
-    u_id = request.POST.get('u_id')
+def to_a_quarantine_list_up(request):
+    date = Healthcode.objects.filter(healthcode='yellow')
+    t_info = []
+    for line in date:
+        t_date = Quarantine.objects.get(u_id=line.u_id)
+        l_info = {'id': t_date.u_id, 'location': t_date.q_location, 'time': t_date.cancel_time}
+        t_info.append(l_info)
+    return render(request, 'a_quarantine_list_up.html', {'data': t_info})
+
+
+def a_quarantine_up(request, u_id):
     q_location = request.POST.get('q_location')
     cancel_time = request.POST.get('cancel_time')
-    Quarantine.objects.create(u_id=u_id, q_location=q_location, cancel_time=cancel_time)
+    Quarantine.objects.filter(u_id=u_id).update(q_location=q_location, cancel_time=cancel_time)
     return HttpResponseRedirect(reverse('to_a_quarantine_up'))
 
 
