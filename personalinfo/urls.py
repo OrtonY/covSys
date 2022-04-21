@@ -37,4 +37,10 @@ urlpatterns = [
     path('a_t_quarantine/', views.a_t_quarantine, name="a_t_quarantine"),
     path('to_a_quarantine_up/', views.to_a_quarantine_up, name="to_a_quarantine_up"),
     path('a_quarantine_up/', views.a_quarantine_up, name="a_quarantine_up"),
+    path('to_a_passphrase_up/', views.to_a_passphrase_up, name="to_a_passphrase_up"),
+    path('a_passphrase_up/<str:l_id>', views.a_passphrase_up, name="a_passphrase_up"),
+    path('to_a_healthcode_up/', views.to_a_healthcode_up, name="to_a_healthcode_up"),
+    path('a_healthcode_up/<str:l_id>', views.a_healthcode_up, name="a_healthcode_up"),
+    path('to_a_covlocation_up/', views.to_a_covlocation_up, name="to_a_covlocation_up"),
+    path('a_covlocation_up/<str:l_id>', views.a_covlocation_up, name="a_covlocation_up"),
 ]

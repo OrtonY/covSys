@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>通行码修改</title>
+</head>
+<body>
+<a href="{% url 'a_return' %}">返回</a>
+<table width="400" border="1" cellpadding="10">
+  <tr>
+    <th>学号</th>
+    <th>通行码</th>
+    <th>恢复</th>
+  </tr>
+    {% for line in data %}
+    <tr>
+        <td>{{ line.u_id }}</td>
+        <td>{{ line.passphrase }}</td>
+                {% if line.passphrase == '有效' %}
+                <td>无法操作</td>
+        {% else %}
+                <td width="92" class="nav" ><a href='{% url 'a_passphrase_up' line.u_id %}' >恢复</a></td>
+    {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

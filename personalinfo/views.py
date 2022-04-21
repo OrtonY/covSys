@@ -244,41 +244,44 @@ def a_u_info(request):
 def a_dayclock_info(request):
     u_id = request.POST.get('id', '')
     t_info = []
-    t_year=datetime.date.today().year
-    t_month = datetime.date.today().month
-    t_day = datetime.date.today().day
+    t_year = str(datetime.date.today().year).zfill(4)
+    t_month = str(datetime.date.today().month).zfill(2)
+    t_day = str(datetime.date.today().day).zfill(2)
+    now_date = "{}-{}-{}%%".format(t_year, t_month, t_day)
+    d_id = DailyClock.objects.raw("select * from daily_clock where c_time like %s", [now_date])
     if u_id:
-        data = DailyClock.objects.filter(u_id=u_id).order_by('c_time')
+        t_id = Users.objects.filter(u_id=u_id)
     else:
-        data = DailyClock.objects.all().order_by('c_time')
-    for line in data:
-        date_time = line.c_time
-        c_year = date_time.year
-        c_month = date_time.month
-        c_day = date_time.day
-        if c_year == t_year and c_month == t_month and c_day == t_day:
-            situation = "已打卡"
-            clock_time = line.c_time
-        else:
+        t_id = Users.objects.all()
+    situation = ""
+    clock_time = ""
+    for line in t_id:
+        yes = 0
+        for i in d_id:
+            if line.u_id == i.u_id:
+                situation = "已打卡"
+                clock_time = i.c_time
+                yes = 1
+                break
+        if yes == 0:
             situation = "未打卡"
-            clock_time = "无"
-        l_info = {"u_id": line.u_id, "situation": situation, "c_time": clock_time, }
+            clock_time = " "
+        l_info = {"u_id": line.u_id, "situation": situation, "c_time": clock_time}
         t_info.append(l_info)
-    return render(request, "a_dayclock_info.html",{'data': t_info})
+    return render(request, "a_dayclock_info.html", {'data': t_info})
 
 
-def a_day_clock(request,u_id):
-
+def a_day_clock(request, u_id):
     t_info = []
     if u_id:
         data = DailyClock.objects.filter(u_id=u_id).order_by('id')
         for line in data:
-            l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone,line.c_time]
+            l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone, line.c_time]
             t_info.append(l_info)
     else:
         data = DailyClock.objects.all()
         for line in data:
-            l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone,line.c_time]
+            l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone, line.c_time]
             t_info.append(l_info)
     return render(request, 'a_day_clock.html', {'data': t_info})
 
@@ -315,8 +318,7 @@ def a_quarantine_info(request):
     else:
         data = Quarantine.objects.all().order_by('-id')
     for line in data:
-
-        l_info = { "u_id": line.u_id, "q_location": line.q_location ,"cancel_time": line.cancel_time,}
+        l_info = {"u_id": line.u_id, "q_location": line.q_location, "cancel_time": line.cancel_time, }
         t_info.append(l_info)
     return render(request, 'a_quarantine_info.html', {'data': t_info})
 
@@ -329,7 +331,7 @@ def a_t_quarantine(request):
     else:
         data = TQuarantine.objects.all().order_by('-id')
     for line in data:
-        l_info = { "u_id": line.u_id, "q_location": line.q_location ,"i_time": line.i_time,"o_time":line.o_time}
+        l_info = {"u_id": line.u_id, "q_location": line.q_location, "i_time": line.i_time, "o_time": line.o_time}
         t_info.append(l_info)
     return render(request, 'a_t_quarantine.html', {'data': t_info})
 
@@ -339,11 +341,78 @@ def to_a_quarantine_up(request):
 
 
 def a_quarantine_up(request):
-    u_id = request.POST.get('u_id', '')
-    q_location = request.POST.get('q_location', '')
+    u_id = request.POST.get('u_id')
+    q_location = request.POST.get('q_location')
     cancel_time = request.POST.get('cancel_time')
-    Quarantine.objects.create(u_id=u_id,q_location=q_location,cancel_time=cancel_time)
-    return HttpResponseRedirect(reverse('a_quarantine_up'))
+    Quarantine.objects.create(u_id=u_id, q_location=q_location, cancel_time=cancel_time)
+    return HttpResponseRedirect(reverse('to_a_quarantine_up'))
+
+
+def to_a_passphrase_up(request):
+    t_info = []
+    data = Passphrase.objects.all().order_by('passphrase')
+    for line in data:
+        if line.passphrase == 'no':
+            passphrase = '无效'
+        else:
+            passphrase = '有效'
+        l_info = {"u_id": line.u_id, "passphrase": passphrase}
+        t_info.append(l_info)
+    return render(request, 'a_passphrase_up.html', {'data': t_info})
+
+
+def a_passphrase_up(request, l_id):
+    Passphrase.objects.filter(u_id=l_id).update(passphrase='yes')
+    return HttpResponseRedirect(reverse('to_a_passphrase_up'))
+
+
+def to_a_healthcode_up(request):
+    t_info = []
+    data = Healthcode.objects.all().order_by('healthcode')
+    for line in data:
+        if line.healthcode == 'red':
+            healthcode = '红色'
+        elif line.healthcode == 'green':
+            healthcode = '绿色'
+        else:
+            healthcode = '黄色'
+        l_info = {"u_id": line.u_id, "healthcode": healthcode}
+        t_info.append(l_info)
+    return render(request, 'a_healthcode_up.html', {'data': t_info})
+
+
+def a_healthcode_up(request, l_id):
+    Passphrase.objects.filter(u_id=l_id).update(passphrase='yes')
+    Healthcode.objects.filter(u_id=l_id).update(healthcode='green')
+    return HttpResponseRedirect(reverse('to_a_healthcode_up'))
+
+
+def to_a_covlocation_up(request):
+    p = request.POST.get('province', '')
+    c = request.POST.get('city', '')
+    d = request.POST.get('district', '')
+    covlocation = p + c + d
+    t_info = []
+
+    c_year = request.POST.get('year')
+    c_month = request.POST.get('month')
+    c_day = request.POST.get('day')
+    data = USchedule.objects.filter(location=covlocation)
+    for line in data:
+        o_year = int(line.o_time.year)
+        o_month = int(line.o_time.month)
+        o_day = int(line.o_time.day)
+        print(type(line.o_time.year))
+        if int(c_year) == o_year and int(c_month) == o_month and int(c_day) == o_day:
+            l_info = {"u_id": line.u_id, "covlocation": line.location, "o_time": line.o_time}
+            t_info.append(l_info)
+    return render(request, 'a_covlocation_up.html', {'data': t_info})
+
+
+def a_covlocation_up(request, l_id):
+    Passphrase.objects.filter(u_id=l_id).update(passphrase='no')
+    Healthcode.objects.filter(u_id=l_id).update(healthcode='red')
+    return HttpResponseRedirect(reverse('to_a_covlocation_up'))
 
 
 def to_a_f_examine(request, l_id):
@@ -473,6 +542,7 @@ def u_daycard(request, u_id):
         messages.error(request, "您今天已完成打卡，请勿重复打卡")
         return render(request, 'u_daycard.html', context=value)
     else:
+        data = Healthcode.objects.get(u_id=u_id)
         code = data.healthcode
         daycard = DailyClock(u_id=u_id, temperature=float(temperature), emergency_person=emergency_person,
                              emergency_phone=emergency_phone, c_time=time, qrcode=code)
@@ -546,16 +616,14 @@ def monitor(request):
         start = datetime.datetime.strptime(str(now_time), "%Y-%m-%d %H:%M:%S")
         end = datetime.datetime.strptime(str(line1.io_time)[:-6], "%Y-%m-%d %H:%M:%S")
         detail_time = end - start
-        print(detail_time)
         days = (end - start).days
         hours = str(detail_time).split(',')[1].split(':')[0].replace(' ', '')
         minutes = str(detail_time).split(',')[1].split(':')[1]
-        real_hours = -(days * 24 + int(hours) + float(int(minutes)/60))
+        real_hours = -(days * 24 + int(hours) + float(int(minutes) / 60))
         judge = Judge.objects.filter(state=1, situation=0, u_id=line1.u_id)
         j_hours = 2
         for line2 in judge:
             j_hours = line2.l_time
-        print(j_hours, real_hours)
         if real_hours == j_hours:
             name = Users.objects.get(u_id=line1.u_id).u_name
             identity = Users.objects.get(u_id=line1.u_id).identity
@@ -564,8 +632,31 @@ def monitor(request):
             send_email(content=content, email=mail)
             Passphrase.objects.filter(u_id=line1.u_id).update(passphrase="no")
         Judge.objects.filter(state=1, situation=0, u_id=line1.u_id).update(situation=1)
+    # 监测每日打卡
+    now_time = get_now_time()
+    now_time = datetime.datetime.strptime(str(now_time), "%Y-%m-%d %H:%M:%S")
+    if int(now_time.hour) == 21 and int(now_time.minute) == 38:
+        t_year = str(datetime.date.today().year).zfill(4)
+        t_month = str(datetime.date.today().month).zfill(2)
+        t_day = str(datetime.date.today().day).zfill(2)
+        now_date = "{}-{}-{}%%".format(t_year, t_month, t_day)
+        d_id = DailyClock.objects.raw("select * from daily_clock where c_time like %s", [now_date])
+        t_id = Users.objects.all()
+        for line in t_id:
+            yes = 0
+            for i in d_id:
+                if line.u_id == i.u_id:
+                    yes = 1
+                    break
+            if yes == 0:
+                name = Users.objects.get(u_id=line.u_id).u_name
+                identity = Users.objects.get(u_id=line.u_id).identity
+                mail = Users.objects.get(u_id=line.u_id).email
+                content = "{}{}，您当日未进行打卡，目前您的通行码被停用，请及时联系管理员！".format(name, identity)
+                send_email(content=content, email=mail)
+                Passphrase.objects.filter(u_id=line.u_id).update(passphrase="no")
 
-    return 0
+    return HttpResponse('secret')
 
 
 def send_email(content, email):

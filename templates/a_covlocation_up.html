@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>疫情地点上报</title>
+</head>
+<body>
+<a href="{% url 'a_return' %}">返回</a>
+ <form action="/to_a_covlocation_up/" method="post">
+        {% csrf_token %}
+
+       <tr>外出地点:</tr>
+        <select name="province" id="p">
+            <option value="浙江省">浙江省</option>
+            <option value="">河北省</option>
+            <option value="">内蒙古自治区</option>
+            <option value="">吉林省</option>
+            <option value="">上海市</option>
+            <option value="">北京市</option>
+            <option value="">福建省</option>
+            <option value="">山东省</option>
+            <option value="">湖北省</option>
+            <option value="">广东省</option>
+            <option value="">海南省</option>
+            <option value="">四川省</option>
+            <option value="">云南省</option>
+            <option value="">陕西省</option>
+            <option value="">青海省</option>
+            <option value="">新疆维吾尔自治区</option>
+            <option value="">澳门特别行政区</option>
+            <option value="">天津市</option>
+            <option value="">山西省</option>
+            <option value="">辽宁省</option>
+            <option value="">黑龙江省</option>
+            <option value="">江苏省</option>
+            <option value="">安徽省</option>
+            <option value="">江西省</option>
+            <option value="">河南省</option>
+            <option value="">湖南省</option>
+            <option value="">广西壮族自治区</option>
+            <option value="">重庆市</option>
+            <option value="">贵州省</option>
+            <option value="">西藏自治区</option>
+            <option value="">甘肃省</option>
+            <option value="">宁夏回族自治区</option>
+            <option value="">香港特别行政区</option>
+            <option value="">台湾省</option>
+            </select>
+            &emsp13;
+            <select name="city" id="c">
+            <option value="杭州市">杭州市</option>
+            <option value="">金华市</option>
+            <option value="">宁波市</option>
+            <option value="">衢州市</option>
+            <option value="">温州市</option>
+            <option value="">舟山市</option>
+            <option value="">嘉兴市</option>
+            <option value="">台州市</option>
+            <option value="">湖州市</option>
+            <option value="">丽水市</option>
+            <option value="">绍兴市</option>
+            </select>
+            &emsp13;
+            <select name="district" id="d">
+            <option value="上城区">上城区</option>
+            <option value="拱墅区">拱墅区</option>
+            <option value="西湖区">西湖区</option>
+            <option value="滨江区">滨江区</option>
+            <option value="萧山区">萧山区</option>
+            <option value="余杭区">余杭区</option>
+            <option value="富阳区">富阳区</option>
+            <option value="临安区">临安区</option>
+            <option value="临平区">临平区</option>
+            <option value="钱塘区">钱塘区</option>
+            <option value="建德市">建德市</option>
+            <option value="桐庐县">桐庐县</option>
+            <option value="淳安县">淳安县</option>
+        </select>
+     <p><label>年</label><input type="text" name="year"></p>
+     <p><label>月</label><input type="text" name="month"></p>
+     <p><label>日</label><input type="text" name="day"></p>
+        <input type="submit" value="提交">
+    </form>
+
+<table width="400" border="1" cellpadding="10">
+  <tr>
+    <th>学号</th>
+    <th>地点</th>
+    <th>时间</th>
+  </tr>
+    {% for line in data %}
+    <tr>
+        <td width="92" class="nav" ><a href='{% url 'a_covlocation_up' line.u_id %}' >{{ line.u_id }}</a></td>
+        <td>{{ line.covlocation }}</td>
+        <td>{{ line.o_time }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
