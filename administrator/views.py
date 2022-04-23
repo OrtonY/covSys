@@ -1,5 +1,6 @@
 import xlrd
 from django.db import transaction
+from dateutil.relativedelta import relativedelta
 from personalinfo.views import *
 
 
@@ -116,7 +117,7 @@ def a_dayclock_info(request):
         for i in d_id:
             if line.u_id == i.u_id:
                 situation = "已打卡"
-                clock_time = i.c_time
+                clock_time = str(i.c_time)[:-6]
                 yes = 1
                 break
         if yes == 0:
@@ -129,16 +130,10 @@ def a_dayclock_info(request):
 
 def a_day_clock(request, u_id):
     t_info = []
-    if u_id:
-        data = DailyClock.objects.filter(u_id=u_id).order_by('id')
-        for line in data:
-            l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone, line.c_time]
-            t_info.append(l_info)
-    else:
-        data = DailyClock.objects.all()
-        for line in data:
-            l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone, line.c_time]
-            t_info.append(l_info)
+    data = DailyClock.objects.filter(u_id=u_id).order_by('-id')
+    for line in data:
+        l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone, str(line.c_time)[:-6]]
+        t_info.append(l_info)
     return render(request, 'a_day_clock.html', {'data': t_info})
 
 
@@ -166,19 +161,6 @@ def a_examine(request):
     return render(request, 'a_examine.html', {'data': t_info})
 
 
-def a_quarantine_info(request):
-    u_id = request.POST.get('id', '')
-    t_info = []
-    if u_id:
-        data = Quarantine.objects.filter(u_id=u_id).order_by('-id')
-    else:
-        data = Quarantine.objects.all().order_by('-id')
-    for line in data:
-        l_info = {"u_id": line.u_id, "q_location": line.q_location, "cancel_time": line.cancel_time, }
-        t_info.append(l_info)
-    return render(request, 'a_quarantine_info.html', {'data': t_info})
-
-
 def a_t_quarantine(request):
     u_id = request.POST.get('id', '')
     t_info = []
@@ -187,32 +169,48 @@ def a_t_quarantine(request):
     else:
         data = TQuarantine.objects.all().order_by('-id')
     for line in data:
-        l_info = {"u_id": line.u_id, "q_location": line.q_location, "i_time": line.i_time, "o_time": line.o_time}
+        l_info = {"u_id": line.u_id, "q_location": line.q_location, "i_time": str(line.i_time)[:10],
+                  "o_time": str(line.o_time)[:10]}
         t_info.append(l_info)
     return render(request, 'a_t_quarantine.html', {'data': t_info})
 
 
 def to_a_quarantine_up(request, u_id):
-    value = {'id': u_id}
+    date = Quarantine.objects.get(u_id=u_id)
+    value = {'id': u_id, 'location': date.q_location, 'time': str(date.cancel_time)[:10]}
     return render(request, 'a_quarantine_up.html', context=value)
 
 
 def to_a_quarantine_list_up(request):
+    u = request.POST.get('id', '')
     date = Healthcode.objects.filter(healthcode='yellow')
     t_info = []
-    for line in date:
-        t_date = Quarantine.objects.filter(u_id=line.u_id)
+    if u:
+        t_date = Quarantine.objects.filter(u_id=u)
         for l_line in t_date:
-            l_info = {'id': l_line.u_id, 'location': l_line.q_location, 'time': l_line.cancel_time}
+            l_info = {'id': l_line.u_id, 'location': l_line.q_location, 'time': str(l_line.cancel_time)[:10]}
             t_info.append(l_info)
+    else:
+        for line in date:
+            t_date = Quarantine.objects.filter(u_id=line.u_id)
+            for l_line in t_date:
+                l_info = {'id': l_line.u_id, 'location': l_line.q_location, 'time': str(l_line.cancel_time)[:10]}
+                t_info.append(l_info)
     return render(request, 'a_quarantine_list_up.html', {'data': t_info})
 
 
 def a_quarantine_up(request, u_id):
     q_location = request.POST.get('q_location')
     cancel_time = request.POST.get('cancel_time')
+    now = get_now_time()
     Quarantine.objects.filter(u_id=u_id).update(q_location=q_location, cancel_time=cancel_time)
-    return HttpResponseRedirect(reverse('to_a_quarantine_up'))
+    t_id = Quarantine.objects.get(u_id=u_id).id
+    count = TQuarantine.objects.filter(t_id=t_id).count()
+    if count == 0:
+        TQuarantine.objects.create(u_id=u_id, q_location=q_location, i_time=now, o_time=cancel_time, t_id=t_id)
+    else:
+        TQuarantine.objects.filter(u_id=u_id, t_id=t_id).update(q_location=q_location, o_time=cancel_time)
+    return HttpResponseRedirect(reverse('a_return'))
 
 
 def to_a_passphrase_up(request):
@@ -255,24 +253,6 @@ def a_healthcode_up(request, l_id):
 
 
 def to_a_covlocation_up(request):
-    # p = request.POST.get('province', '')
-    # c = request.POST.get('city', '')
-    # d = request.POST.get('district', '')
-    # covlocation = p + c + d + "%%"
-    # t_info = []
-    # c_year = request.POST.get('year', '')
-    # c_month = request.POST.get('month', '')
-    # c_day = request.POST.get('day', '')
-    # print(c_year)
-    # data = USchedule.objects.raw("select * from u_schedule where location like %s", [covlocation])
-    # for line in data:
-    #     o_year = int(line.o_time.year)
-    #     o_month = int(line.o_time.month)
-    #     o_day = int(line.o_time.day)
-    #     if int(c_year) == o_year and int(c_month) == o_month and int(c_day) == o_day:
-    #         l_info = {"u_id": line.u_id, "covlocation": line.location, "o_time": line.o_time}
-    #         t_info.append(l_info)
-    # return render(request, 'a_covlocation_up.html', {'data': t_info})
     return render(request, 'a_covlocation_up.html')
 
 
@@ -284,17 +264,50 @@ def a_covlocation_up(request):
     c_year = request.POST.get('year', '')
     c_month = request.POST.get('month', '')
     c_day = request.POST.get('day', '')
+    c_time = int(request.POST.get('time', ''))
     data = USchedule.objects.raw("select * from u_schedule where location like %s", [covlocation])
     for line in data:
         o_year = int(line.o_time.year)
         o_month = int(line.o_time.month)
         o_day = int(line.o_time.day)
-        if int(c_year) == o_year and int(c_month) == o_month and int(c_day) == o_day:
+        s_d = datetime.date(int(c_year), int(c_month), int(c_day))
+        s_dt = datetime.datetime.strptime(str(s_d), '%Y-%m-%d')
+        o_d = datetime.date(int(o_year), int(o_month), int(o_day))
+        o_dt = datetime.datetime.strptime(str(o_d), '%Y-%m-%d')
+        today = datetime.datetime.now()
+        print(type(s_dt), type(line.o_time), type(today))
+        if s_dt < o_dt < today:
             Passphrase.objects.filter(u_id=line.u_id).update(passphrase='no')
             Healthcode.objects.filter(u_id=line.u_id).update(healthcode='yellow')
             count = Quarantine.objects.filter(u_id=line.u_id).count()
+            now = get_now_time()
             if count == 0:
-                Quarantine.objects.create(u_id=line.u_id, q_location='')
+                c_date = (datetime.date.today() + relativedelta(days=c_time)).strftime("%Y-%m-%d")
+                Quarantine.objects.create(u_id=line.u_id, q_location='校医院', cancel_time=c_date)
+                t_id = Quarantine.objects.get(u_id=line.u_id).id
+                TQuarantine.objects.create(u_id=line.u_id, q_location='校医院', i_time=now, o_time=c_date, t_id=t_id)
+            classes = Classes.objects.get(u_id=line.u_id).classes
+            dep = Dormitory.objects.get(u_id=line.u_id).department
+            r_id = Dormitory.objects.get(u_id=line.u_id).room_id
+            for i in Classes.objects.filter(classes=classes):
+                Passphrase.objects.filter(u_id=i.u_id).update(passphrase='no')
+                Healthcode.objects.filter(u_id=i.u_id).update(healthcode='yellow')
+                count = Quarantine.objects.filter(u_id=i.u_id).count()
+                if count == 0:
+                    c_date = (datetime.date.today() + relativedelta(days=c_time)).strftime("%Y-%m-%d")
+                    Quarantine.objects.create(u_id=i.u_id, q_location='校医院', cancel_time=c_date)
+                    t_id = Quarantine.objects.get(u_id=i.u_id).id
+                    TQuarantine.objects.create(u_id=i.u_id, q_location='校医院', i_time=now, o_time=c_date, t_id=t_id)
+            for i in Dormitory.objects.filter(department=dep, room_id=r_id):
+                Passphrase.objects.filter(u_id=i.u_id).update(passphrase='no')
+                Healthcode.objects.filter(u_id=i.u_id).update(healthcode='yellow')
+                count = Quarantine.objects.filter(u_id=i.u_id).count()
+                if count == 0:
+                    c_date = (datetime.date.today() + relativedelta(days=c_time)).strftime("%Y-%m-%d")
+                    Quarantine.objects.create(u_id=i.u_id, q_location='校医院', cancel_time=c_date)
+                    t_id = Quarantine.objects.get(u_id=i.u_id).id
+                    TQuarantine.objects.create(u_id=i.u_id, q_location='校医院', i_time=now, o_time=c_date, t_id=t_id)
+
     return HttpResponseRedirect(reverse('to_a_covlocation_up'))
 
 
@@ -303,7 +316,8 @@ def to_a_f_examine(request, l_id):
 
 
 def a_f_examine(request, l_id):
-    state = request.POST.get('state', '')
+    state = request.POST.get('value')
+    print(state)
     Judge.objects.filter(id=l_id).update(state=state)
     return HttpResponseRedirect(reverse('a_examine'))
 
@@ -318,7 +332,7 @@ def a_inout_query(request):
                 in_out = "进"
             else:
                 in_out = "出"
-            l_info = [line.u_id, in_out, line.io_time, line.door_id]
+            l_info = [line.u_id, in_out, str(line.io_time)[:-6], line.door_id]
             t_info.append(l_info)
     else:
         data = Iotable.objects.all()
@@ -327,6 +341,32 @@ def a_inout_query(request):
                 in_out = "进"
             else:
                 in_out = "出"
-            l_info = [line.u_id, in_out, line.io_time, line.door_id]
+            l_info = [line.u_id, in_out, str(line.io_time)[:-6], line.door_id]
             t_info.append(l_info)
     return render(request, 'a_inout_query.html', {'data': t_info})
+
+
+def a_t_schedule(request):
+    u_id = request.POST.get('id', '')
+    t_info = []
+    if u_id:
+        data = USchedule.objects.filter(u_id=u_id).order_by('-id')
+    else:
+        data = USchedule.objects.all().order_by('-id')
+    for line in data:
+        l_info = [line.u_id, line.location, str(line.o_time)[:-6]]
+        t_info.append(l_info)
+    return render(request, 'a_total_schedule.html', {'data': t_info})
+
+
+def a_t_interfacciami(request):
+    u_id = request.POST.get('id', '')
+    t_info = []
+    if u_id:
+        data = Interfacciami.objects.filter(u_id=u_id).order_by('-id')
+    else:
+        data = Interfacciami.objects.all().order_by('-id')
+    for line in data:
+        l_info = [line.u_id, line.reason, str(line.time)[:-6]]
+        t_info.append(l_info)
+    return render(request, 'a_total_schedule.html', {'data': t_info})

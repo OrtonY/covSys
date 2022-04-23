@@ -16,4 +16,6 @@ urlpatterns = [
     path('daycard/<str:u_id>', views.u_daycard, name="daycard"),
     path('u_inout_door/<str:u_id>', views.to_u_inout_door, name="u_inout_door"),
     path('inout_door/<str:u_id>', views.u_inout_door, name="inout_door"),
+    path('u_interfacciami/<str:u_id>', views.u_interfacciami, name="u_interfacciami"),
+    path('u_my_schedule/<str:u_id>', views.u_my_schedule, name="u_my_schedule"),
 ]

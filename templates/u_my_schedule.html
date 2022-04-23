@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a href="{% url 'u_return' id %}">返回</a>
+<table width="400" border="1" cellpadding="10">
+  <tr>
+    <th>location</th>
+      <th>time</th>
+  </tr>
+    {% for line in data %}
+    <tr>
+        {% for i in line %}
+            <td>{{ i }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

@@ -5,7 +5,7 @@
     <title>信息查询</title>
 </head>
 <body>
-<a href="{% url 'u_return' id%}">返回</a>
+<a href="{% url 'u_return' id %}">返回</a>
 <table id="infomation1">
     <tr><th>我</th></tr>
     <tr><td>姓名:{{ name }}</td></tr>
@@ -24,7 +24,7 @@
     <tr>审批时长：</tr><tr>{{ j2 }}小时</tr>
     <tr>用户状态：</tr><tr>{{ j3 }}</tr>
     <br><br>
-    <tr>违规详情</tr><tr>{{ interfacciami }}</tr>
+    <tr>违规详情</tr><a href="{% url 'u_interfacciami' id %}">{{ interfacciami }}</a>
     <br><br>
     <tr>健康码：</tr><tr>{{ code }}</tr>
     <br><br>
@@ -43,7 +43,7 @@
             <meta http-equiv="refresh" content="5">
             <!-- 区块刷新 -->
         {% else %}
-        <td width="92" class="nav" >尚无，请联系管理员</td>
+        <td width="92" class="nav" >暂无通行码，请及时联系管理员</td>
     {% endif %}
 </table>
 <style type="text/css">

@@ -74,14 +74,14 @@ def u_info(request, u_id):
 
     value = {'id': u_id, 'name': data.u_name, 'identity': data.identity, 'phone': data.phone, 'email': data.email,
              'year': u_id[:4], 'class': cla.classes, 'dor': str(dor.department) + dor.room_id, 'j1': state,
-             'j2': l_time, 'j3': situation, 'interfacciami': interfacciami, 'code': code, 'q1': q1, 'q2': q2,
+             'j2': l_time, 'j3': situation, 'interfacciami': interfacciami, 'code': code, 'q1': q1, 'q2': str(q2)[:10],
              'passphrase': passphrase.passphrase}
     return render(request, 'u_information.html', context=value)
 
 
 def to_u_schedul(request, u_id):
     time = get_now_time()
-    value = {'id': u_id, 'time': time}
+    value = {'id': u_id, 'time': str(time)}
     return render(request, 'u_schedul.html', context=value)
 
 
@@ -123,6 +123,11 @@ def u_covid_test(request, u_id):
     time = get_now_time()
     cov_test = NucleicAcid(u_id=u_id, t_time=time, result=result)
     cov_test.save()
+    if result == "1":
+        Healthcode.objects.filter(u_id=u_id).update(healthcode="red")
+        Passphrase.objects.filter(u_id=u_id).update(passphrase="no")
+        if Quarantine.objects.filter(u_id=u_id).count() == 1:
+            Quarantine.objects.filter(u_id=u_id).delete()
     data = Users.objects.get(u_id=u_id)
     value = {"id": data.u_id, "name": data.u_name, "identity": data.identity}
     return render(request, 'u_navigation.html', context=value)
@@ -143,7 +148,7 @@ def to_u_daycard(request, u_id):
         code = "黄码"
     else:
         code = "红码"
-    value = {'id': u_id, 'time': time, 'code': code, 'b_time': be_time}
+    value = {'id': u_id, 'time': str(time), 'code': code, 'b_time': str(be_time)[:-6]}
     return render(request, 'u_daycard.html', context=value)
 
 
@@ -166,8 +171,8 @@ def u_daycard(request, u_id):
         code = "黄码"
     else:
         code = "红码"
-    value = {"id": data.u_id, "name": data.u_name, "identity": data.identity, 'time': time, 'code': code,
-             'b_time': be_time}
+    value = {"id": data.u_id, "name": data.u_name, "identity": data.identity, 'time': str(time), 'code': code,
+             'b_time': str(be_time)[:-6]}
     if str(time)[:10] == str(be_time)[:10]:
         messages.error(request, "您今天已完成打卡，请勿重复打卡")
         return render(request, 'u_daycard.html', context=value)
@@ -183,7 +188,7 @@ def u_daycard(request, u_id):
 
 def to_u_inout_door(request, u_id):
     time = get_now_time()
-    value = {'id': u_id, 'time': time}
+    value = {'id': u_id, 'time': str(time)}
     return render(request, 'u_inout_door.html', context=value)
 
 
@@ -192,7 +197,7 @@ def u_inout_door(request, u_id):
     door = request.POST.get('door', '')
     time = get_now_time()
     data = Users.objects.get(u_id=u_id)
-    value = {"id": data.u_id, "name": data.u_name, "identity": data.identity, "time": time}
+    value = {"id": data.u_id, "name": data.u_name, "identity": data.identity, "time": str(time)}
     state = 1
     if io == "出":
         io = 0
@@ -221,8 +226,27 @@ def u_inout_door(request, u_id):
                 iotable = Iotable(u_id=u_id, in_out=io, io_time=time, door_id=door, state=1)
                 Iotable.objects.filter(u_id=u_id).update(state=1)
                 iotable.save()
+                Judge.objects.filter(state=1, situation=0, u_id=u_id).update(situation=1)
                 return render(request, 'u_navigation.html', context=value)
     else:
         messages.error(request, "您目前没有通行码，无法出入校门")
         return render(request, 'u_inout_door.html', context=value)
+
+
+def u_interfacciami(request, u_id):
+    t_info = []
+    data = Interfacciami.objects.filter(u_id=u_id).order_by('-id')
+    for line in data:
+        l_info = [line.reason, str(line.time)[:-6]]
+        t_info.append(l_info)
+    return render(request, 'u_interfacciami.html', {'data': t_info, 'id': u_id})
+
+
+def u_my_schedule(request, u_id):
+    t_info = []
+    data = USchedule.objects.filter(u_id=u_id).order_by('-id')
+    for line in data:
+        l_info = [line.location, str(line.o_time)[:-6]]
+        t_info.append(l_info)
+    return render(request, 'u_my_schedule.html', {'data': t_info, 'id':u_id})
 

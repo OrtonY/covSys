@@ -61,6 +61,7 @@ class Healthcode(models.Model):
 class Interfacciami(models.Model):
     u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     reason = models.CharField(max_length=200, blank=True, null=True)
+    time = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -125,6 +126,7 @@ class TQuarantine(models.Model):
     q_location = models.CharField(max_length=200, blank=True, null=True)
     i_time = models.DateTimeField(blank=True, null=True)
     o_time = models.DateTimeField(blank=True, null=True)
+    t_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False

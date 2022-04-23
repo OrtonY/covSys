@@ -10,7 +10,8 @@
     <form action="{% url 'a_f_examine' l_id %}" method="post">
         {% csrf_token %}
         <p><label>审批选项</label></p>
-        <p><label>1、2</label><input type="text" name="state"></p>
+        <label style="vertical-align: middel;"><input type="radio" name="value" value="1" >同意</label>
+        <label style="vertical-align: middel;"><input type="radio" name="value" value="2" >不同意</label>
         <input type="submit" value="确定">
     </form>
 </body>

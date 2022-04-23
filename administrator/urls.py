@@ -14,7 +14,6 @@ urlpatterns = [
     path('to_a_f_examine/<str:l_id>', views.to_a_f_examine, name="to_a_f_examine"),
     path('a_f_examine/<str:l_id>', views.a_f_examine, name="a_f_examine"),
     path('a_dayclock_info/', views.a_dayclock_info, name="a_dayclock_info"),
-    path('a_quarantine_info/', views.a_quarantine_info, name="a_quarantine_info"),
     path('a_t_quarantine/', views.a_t_quarantine, name="a_t_quarantine"),
     path('to_a_quarantine_up/<str:u_id>', views.to_a_quarantine_up, name="to_a_quarantine_up"),
     path('a_quarantine_up/<str:u_id>', views.a_quarantine_up, name="a_quarantine_up"),
@@ -25,4 +24,6 @@ urlpatterns = [
     path('a_healthcode_up/<str:l_id>', views.a_healthcode_up, name="a_healthcode_up"),
     path('to_a_covlocation_up/', views.to_a_covlocation_up, name="to_a_covlocation_up"),
     path('a_covlocation_up/', views.a_covlocation_up, name="a_covlocation_up"),
+    path('a_t_schedule/', views.a_t_schedule, name="a_t_schedule"),
+    path('a_t_interfacciami/', views.a_t_interfacciami, name="a_t_interfacciami"),
 ]

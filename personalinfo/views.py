@@ -98,7 +98,7 @@ def monitor(request):
             content = "{}{}，您出校已超过规定时间，目前您的通行码被停用，请及时联系管理员！".format(name, identity)
             send_email(content=content, email=mail)
             Passphrase.objects.filter(u_id=line1.u_id).update(passphrase="no")
-        Judge.objects.filter(state=1, situation=0, u_id=line1.u_id).update(situation=1)
+            Interfacciami.objects.create(u_id=line1.u_id, reason="未按时返校", time=get_now_time())
     # 监测每日打卡
     now_time = get_now_time()
     now_time = datetime.datetime.strptime(str(now_time), "%Y-%m-%d %H:%M:%S")
@@ -122,6 +122,21 @@ def monitor(request):
                 content = "{}{}，您当日未进行打卡，目前您的通行码被停用，请及时联系管理员！".format(name, identity)
                 send_email(content=content, email=mail)
                 Passphrase.objects.filter(u_id=line.u_id).update(passphrase="no")
+                Interfacciami.objects.create(u_id=line.u_id, reason="未按时打卡", time=get_now_time())
+    # 监测隔离数据
+    t_year = str(datetime.date.today().year).zfill(4)
+    t_month = str(datetime.date.today().month).zfill(2)
+    t_day = str(datetime.date.today().day).zfill(2)
+    now_date = "{}-{}-{}%%".format(t_year, t_month, t_day)
+    data01 = Quarantine.objects.raw("select * from quarantine where cancel_time like %s", [now_date])
+    data02 = NucleicAcid.objects.raw("select * from nucleic_acid where t_time like %s", [now_date])
+    for line01 in data01:
+        for line02 in data02:
+            if line01.u_id == line02.u_id and line02.result == "0":
+                Healthcode.objects.filter(u_id=line01.u_id).update(healthcode="green")
+                Passphrase.objects.filter(u_id=line01.u_id).update(passphrase="yes")
+                Quarantine.objects.get(u_id=line01.u_id).delete()
+                break
 
     return HttpResponse('secret')
 
