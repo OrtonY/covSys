@@ -6,6 +6,24 @@
 </head>
 <body>
 <a href="{% url 'u_return' id%}">返回</a>
+<a href="{% url 'u_info' id %}">个人资料</a>
+<br>
+<a href="{% url 'u_schedul' id %}">外出地点报备</a>
+<br>
+<br>
+<a href="{% url 'u_go_out' id %}">申请出校</a>
+<br>
+<br>
+<a href="{% url 'u_covid_test' id %}">核酸上报</a>
+<br>
+<br>
+<a href="{% url 'u_daycard' id %}">每日打卡</a>
+<br>
+<br>
+<a href="{% url 'u_inout_door' id %}">出入校门</a>
+<br>
+<br>
+<a href="{% url 'u_my_schedule' id %}">本人行程</a>
 <form action="{% url 'go_out' id %}" method="post">
     {% csrf_token %}
     <table id="go_out">

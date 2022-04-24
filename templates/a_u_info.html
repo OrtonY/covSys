@@ -6,6 +6,18 @@
 </head>
 <body>
     <a href="{% url 'a_return' %}">返回</a>
+        <p><a href="{% url "batch" %}">批量上传数据</a></p>
+    <p><a href="{% url 'a_dayclock_info' %}">每日打卡</a></p>
+    <p><a href="{% url 'a_inout_query' %}">进出校数据查询</a></p>
+    <p><a href="{% url 'a_u_info' %}">学生信息查询</a></p>
+    <p><a href="{% url 'a_examine' %}">外出审批</a></p>
+    <p><a href="{% url 'to_a_covlocation_up' %}">疫情地点上报</a></p>
+    <p><a href="{% url 'a_quarantine_list_up' %}">隔离数据修改</a></p>
+    <p><a href="{% url 'to_a_passphrase_up' %}">异常通行码修改</a></p>
+    <p><a href="{% url 'to_a_healthcode_up' %}">异常健康码修改</a></p>
+    <p><a href="{% url 'a_t_schedule' %}">外出数据总表</a></p>
+    <p><a href="{% url 'a_t_quarantine' %}">隔离数据总记录表</a></p>
+    <p><a href="{% url 'a_t_interfacciami' %}">违规记录总表</a></p>
     <form action="/a_u_info/" method="post">
         {% csrf_token %}
         <p><label>请输入需查询的学生学号</label></p>
