@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,8 +54,8 @@
     {% if passphrase == "yes" %}
         <script language="JavaScript" type="text/javascript">
             tips = new Array(2);
-            tips[0] = '<a><img src="../static/picture/1.jpg" ></a>';
-            tips[1] = '<a><img src="../static/picture/2.jpg" ></a>';
+            tips[0] = '<a><img src="{% static 'picture/1.jpg' %}" ></a>';
+            tips[1] = '<a><img src="{% static 'picture/2.jpg' %}" ></a>';
             index = Math.floor(Math.random() * tips.length);
             document.write(tips[index]);
         </script>
