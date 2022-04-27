@@ -1,18 +1,104 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>登陆选择</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>初始界面</title>
+    <!-- Bootstrap Styles-->
+    <link  href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet" />
+    <!-- FontAwesome Styles-->
+    <link  href="{% static 'assets/css/font-awesome.css' %}" rel="stylesheet" />
+    <!-- Morris Chart Styles-->
+     <link  href="{% static 'assets/js/morris/morris-0.4.3.min.css' %}" rel="stylesheet" />
+    <!-- Custom Styles-->
+     <link  href="{% static 'assets/css/custom-styles.css' %}" rel="stylesheet" />
+    <!-- Google Fonts-->
+    <link  href="{% static 'http://fonts.googleapis.com/css?family=Open+Sans' %}" rel="stylesheet" type='text/css'/>
+    <link  href="{% static 'assets/js/Lightweight-Chart/cssCharts.css' %}" rel="stylesheet" />
 </head>
 <body>
-<h1>校园疫情防控信息管理系统</h1>
-<div class="login-kind student-login-button">
-    <a href="{% url 'u_Login' %}">用户登录</a>
-</div>
-<div class="login-kind teacher-login-button">
-    <a href="{% url 'a_Login' %}">管理员登录</a>
-</div>
-<h1><a href="{% url "to_Register" %}">注册</a></h1>
+    <div id="wrapper">
+        <nav class="navbar navbar-default top-navbar" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url "logout" %}"><strong>校园疫情管理系统</strong></a>
+		<div id="sideNav" href=""><i class="fa fa-caret-right"></i></div>
+            </div>
 
+        </nav>
+        <!--/. NAV TOP  -->
+        <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+                    <li>
+                        <a class="active-menu"  href="{% url "logout" %}"><i class="fa fa-dashboard"></i> 首页</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'u_Login' %}"><i class="fa fa-desktop"></i> 用户登录</a>
+                    </li>
+					<li>
+                        <a href="{% url 'a_Login' %}"><i class="fa fa-bar-chart-o"></i> 管理员登录</a>
+                    </li>
+                    <li>
+                        <a  href="{% url 'to_Register' %}"><i class="fa fa-qrcode"></i> 注册</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!-- /. NAV SIDE  -->
+		<div id="page-wrapper">
+		  <div class="header">
+                        <h1 class="page-header">
+                                  <small>欢迎使用校园疫情防控信息管理系统</small>
+                        </h1>
+						<ol class="breadcrumb">
+					  <li><a href="#">浙江理工大学</a></li>
+					  <li><a href="#">校园疫情管理系统</a></li>
+					  <li class="active">首页</li>
+					</ol>
+
+            </div>
+          <footer><p>Welcome to <a href="https://www.zstu.edu.cn/">zstu.cn</a></p></footer>
+
+
+		  </div>
+            <!-- /. PAGE INNER  -->
+        </div>
+        <!-- /. PAGE WRAPPER  -->
+    </div>
+    <!-- /. WRAPPER  -->
+    <!-- JS Scripts-->
+    <!-- jQuery Js -->
+
+    <script src="{% static 'assets/js/jquery-1.10.2.js' %}"></script>
+    <!-- Bootstrap Js -->
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+
+    <!-- Metis Menu Js -->
+    <script src="{% static 'assets/js/jquery.metisMenu.js' %}"></script>
+    <!-- Morris Chart Js -->
+    <script src="{% static 'assets/js/morris/raphael-2.1.0.min.js' %}"></script>
+    <script src="{% static 'assets/js/morris/morris.js' %}"></script>
+    <script src="{% static 'assets/js/easypiechart.js' %}"></script>
+    <script src="{% static 'assets/js/easypiechart-data.js' %}"></script>
+     <script src="{% static 'assets/js/Lightweight-Chart/jquery.chart.js' %}"></script>
+     <!-- DATA TABLE SCRIPTS -->
+    <script src="{% static 'assets/js/dataTables/jquery.dataTables.js' %}"></script>
+      <script src="{% static 'assets/js/dataTables/dataTables.bootstrap.js' %}"></script>
+        <script>
+            $(document).ready(function () {
+                $('#dataTables-example').dataTable();
+            });
+    </script>
+    <!-- Custom Js -->
+    <script src="{% static 'assets/js/custom-scripts.js' %}"></script>
+    <script></script>
 </body>
+
 </html>

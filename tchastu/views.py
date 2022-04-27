@@ -194,7 +194,7 @@ def to_u_inout_door(request, u_id):
 
 def u_inout_door(request, u_id):
     io = request.POST.get('i_o', '')
-    door = request.POST.get('door', '')
+    door = request.POST.get('door')
     time = get_now_time()
     data = Users.objects.get(u_id=u_id)
     value = {"id": data.u_id, "name": data.u_name, "identity": data.identity, "time": str(time)}

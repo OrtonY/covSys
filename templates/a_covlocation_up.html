@@ -1,114 +1,422 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>疫情地点上报</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>疫情地点上传</title>
+    <!-- Bootstrap Styles-->
+    <link  href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet" />
+    <!-- FontAwesome Styles-->
+    <link  href="{% static 'assets/css/font-awesome.css' %}" rel="stylesheet" />
+    <!-- Morris Chart Styles-->
+     <link  href="{% static 'assets/js/morris/morris-0.4.3.min.css' %}" rel="stylesheet" />
+    <!-- Custom Styles-->
+     <link  href="{% static 'assets/css/custom-styles.css' %}" rel="stylesheet" />
+    <!-- Google Fonts-->
+    <link  href="{% static 'http://fonts.googleapis.com/css?family=Open+Sans' %}" rel="stylesheet" type='text/css'/>
+    <link  href="{% static 'assets/js/Lightweight-Chart/cssCharts.css' %}" rel="stylesheet" />
 </head>
 <body>
-<a href="{% url 'a_return' %}">返回</a>
-    <p><a href="{% url "batch" %}">批量上传数据</a></p>
-    <p><a href="{% url 'a_dayclock_info' %}">每日打卡</a></p>
-    <p><a href="{% url 'a_inout_query' %}">进出校数据查询</a></p>
-    <p><a href="{% url 'a_u_info' %}">学生信息查询</a></p>
-    <p><a href="{% url 'a_examine' %}">外出审批</a></p>
-    <p><a href="{% url 'to_a_covlocation_up' %}">疫情地点上报</a></p>
-    <p><a href="{% url 'a_quarantine_list_up' %}">隔离数据修改</a></p>
-    <p><a href="{% url 'to_a_passphrase_up' %}">异常通行码修改</a></p>
-    <p><a href="{% url 'to_a_healthcode_up' %}">异常健康码修改</a></p>
-    <p><a href="{% url 'a_t_schedule' %}">外出数据总表</a></p>
-    <p><a href="{% url 'a_t_quarantine' %}">隔离数据总记录表</a></p>
-    <p><a href="{% url 'a_t_interfacciami' %}">违规记录总表</a></p>
- <form action="/a_covlocation_up/" method="post">
-        {% csrf_token %}
+    <div id="wrapper">
+        <nav class="navbar navbar-default top-navbar" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url "a_return" %}"><strong>校园疫情管理系统</strong></a>
+		<div id="sideNav" href=""><i class="fa fa-caret-right"></i></div>
+            </div>
 
-       <tr>外出地点:</tr>
-        <select name="province" id="p">
-            <option value="浙江省">浙江省</option>
-            <option value="">河北省</option>
-            <option value="">内蒙古自治区</option>
-            <option value="">吉林省</option>
-            <option value="">上海市</option>
-            <option value="">北京市</option>
-            <option value="">福建省</option>
-            <option value="">山东省</option>
-            <option value="">湖北省</option>
-            <option value="">广东省</option>
-            <option value="">海南省</option>
-            <option value="">四川省</option>
-            <option value="">云南省</option>
-            <option value="">陕西省</option>
-            <option value="">青海省</option>
-            <option value="">新疆维吾尔自治区</option>
-            <option value="">澳门特别行政区</option>
-            <option value="">天津市</option>
-            <option value="">山西省</option>
-            <option value="">辽宁省</option>
-            <option value="">黑龙江省</option>
-            <option value="">江苏省</option>
-            <option value="">安徽省</option>
-            <option value="">江西省</option>
-            <option value="">河南省</option>
-            <option value="">湖南省</option>
-            <option value="">广西壮族自治区</option>
-            <option value="">重庆市</option>
-            <option value="">贵州省</option>
-            <option value="">西藏自治区</option>
-            <option value="">甘肃省</option>
-            <option value="">宁夏回族自治区</option>
-            <option value="">香港特别行政区</option>
-            <option value="">台湾省</option>
-            </select>
-            &emsp13;
-            <select name="city" id="c">
-            <option value="杭州市">杭州市</option>
-            <option value="">金华市</option>
-            <option value="">宁波市</option>
-            <option value="">衢州市</option>
-            <option value="">温州市</option>
-            <option value="">舟山市</option>
-            <option value="">嘉兴市</option>
-            <option value="">台州市</option>
-            <option value="">湖州市</option>
-            <option value="">丽水市</option>
-            <option value="">绍兴市</option>
-            </select>
-            &emsp13;
-            <select name="district" id="d">
-            <option value="上城区">上城区</option>
-            <option value="拱墅区">拱墅区</option>
-            <option value="西湖区">西湖区</option>
-            <option value="滨江区">滨江区</option>
-            <option value="萧山区">萧山区</option>
-            <option value="余杭区">余杭区</option>
-            <option value="富阳区">富阳区</option>
-            <option value="临安区">临安区</option>
-            <option value="临平区">临平区</option>
-            <option value="钱塘区">钱塘区</option>
-            <option value="建德市">建德市</option>
-            <option value="桐庐县">桐庐县</option>
-            <option value="淳安县">淳安县</option>
-        </select>
-     <p><label>年</label><input type="text" name="year"></p>
-     <p><label>月</label><input type="text" name="month"></p>
-     <p><label>日</label><input type="text" name="day"></p>
-     <p><label>隔离时长：</label><input type="text" name="time" value="14">天</p>
-        <input type="submit" value="提交">
-    </form>
+             <ul class="nav navbar-top-links navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-envelope fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-messages">
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <strong>杨新源</strong>
+                                    <span class="pull-right text-muted">
+                                        <em>Today</em>
+                                    </span>
+                                </div>
+                                <div>你好帅</div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <strong>钟永军 </strong>
+                                    <span class="pull-right text-muted">
+                                        <em>Yesterday</em>
+                                    </span>
+                                </div>
+                                <div>老师我想请假</div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <strong>徐松</strong>
+                                    <span class="pull-right text-muted">
+                                        <em>Yesterday</em>
+                                    </span>
+                                </div>
+                                <div>老师我想申请离校</div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#">
+                                <strong>Read All Messages</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-messages -->
+                </li>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-tasks fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-tasks">
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <p>
+                                        <strong>Task 1</strong>
+                                        <span class="pull-right text-muted">60% Complete</span>
+                                    </p>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                                            <span class="sr-only">60% Complete (success)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <p>
+                                        <strong>Task 2</strong>
+                                        <span class="pull-right text-muted">28% Complete</span>
+                                    </p>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="28" aria-valuemin="0" aria-valuemax="100" style="width: 28%">
+                                            <span class="sr-only">28% Complete</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <p>
+                                        <strong>Task 3</strong>
+                                        <span class="pull-right text-muted">60% Complete</span>
+                                    </p>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                                            <span class="sr-only">60% Complete (warning)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <p>
+                                        <strong>Task 4</strong>
+                                        <span class="pull-right text-muted">85% Complete</span>
+                                    </p>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style="width: 85%">
+                                            <span class="sr-only">85% Complete (danger)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#">
+                                <strong>See All Tasks</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-tasks -->
+                </li>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-bell fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-alerts">
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-comment fa-fw"></i> New Comment
+                                    <span class="pull-right text-muted small">4 min</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-twitter fa-fw"></i> 3 New Followers
+                                    <span class="pull-right text-muted small">12 min</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-envelope fa-fw"></i> Message Sent
+                                    <span class="pull-right text-muted small">4 min</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-tasks fa-fw"></i> New Task
+                                    <span class="pull-right text-muted small">4 min</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                                    <span class="pull-right text-muted small">4 min</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#">
+                                <strong>See All Alerts</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-alerts -->
+                </li>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="{% url "logout" %}"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+        </nav>
+        <!--/. NAV TOP  -->
+        <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+                    <li>
+                        <a  href="{% url "a_return" %}"><i class="fa fa-dashboard"></i> 首页</a>
+                    </li>
+                    <li>
+                        <a href="{% url "a_u_info" %}"><i class="fa fa-desktop"></i> 学生信息查询</a>
+                    </li>
+					<li>
+                        <a href="{% url "a_inout_query" %}"><i class="fa fa-bar-chart-o"></i> 进出记录查询</a>
+                    </li>
+                    <li>
+                        <a  href="{% url 'a_dayclock_info' %}"><i class="fa fa-qrcode"></i> 每日打卡</a>
+                    </li>
+                    <li>
+                        <a  href="{% url 'a_examine' %}"><i class="fa fa-table"></i> 外出审批</a>
+                    </li>
+                    <li>
+                        <a  class="active-menu"  href="{% url 'to_a_covlocation_up' %}"><i class="fa fa-edit"></i> 疫情地点上传 </a>
+                    </li>
+                      <li>
+                        <a  href="{% url 'a_quarantine_list_up' %}"><i class="fa fa-edit"></i> 隔离数据修改 </a>
+                    </li>
+                     <li>
+                        <a href="#"><i class="fa fa-sitemap"></i> 异常双码修改<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a  href="{% url 'to_a_passphrase_up' %}">异常通行码修改</a>
+                            </li>
+                            <li>
+                                 <a href="{% url 'to_a_healthcode_up' %}">异常健康码修改</a>
+                            </li>
+                        </ul>
+                    </li>
+                      <li>
+                        <a  href="{% url 'a_t_schedule' %}"><i class="fa fa-edit"></i> 外出数据总表 </a>
+                    </li>
+                       <li>
+                        <a  href="{% url 'a_t_quarantine' %}"><i class="fa fa-edit"></i> 隔离数据总表 </a>
+                    </li>
+                       <li>
+                        <a  href="{% url 'a_t_interfacciami' %}"><i class="fa fa-edit"></i> 违规记录总表 </a>
+                    </li>
 
-{#<table width="400" border="1" cellpadding="10">#}
-{#  <tr>#}
-{#    <th>学号</th>#}
-{#    <th>地点</th>#}
-{#    <th>时间</th>#}
-{#  </tr>#}
-{#    {% for line in data %}#}
-{#    <tr>#}
-{#        <td width="92" class="nav" ><a href='{% url 'a_covlocation_up' line.u_id %}' >{{ line.u_id }}</a></td>#}
-{#        <td>{{ line.covlocation }}</td>#}
-{#        <td>{{ line.o_time }}</td>#}
-{#    </tr>#}
-{#    {% endfor %}#}
-{#</table>#}
+                </ul>
+            </div>
+        </nav>
+        <!-- /. NAV SIDE  -->
+		<div id="page-wrapper">
+		  <div class="header">
+                        <h1 class="page-header">
+                            <small>欢迎管理员使用校园疫情防控信息管理系统</small>
+                        </h1>
+						<ol class="breadcrumb">
+					  <li><a href="#">浙江理工大学</a></li>
+					  <li><a href="#">校园疫情管理系统</a></li>
+					  <li class="active">疫情地点上传</li>
+					</ol>
 
+
+              <div class="row">
+                <div class="col-md-12">
+                    <!-- Advanced Tables -->
+                    <div class="panel panel-default">
+                     <form action="/a_covlocation_up/" method="post">
+                        {% csrf_token %}
+                            <tr>疫情地点:</tr>
+                                     <select name="province" id="p">
+                                        <option value="浙江省">浙江省</option>
+                                        <option value="">河北省</option>
+                                        <option value="">内蒙古自治区</option>
+                                        <option value="">吉林省</option>
+                                        <option value="">上海市</option>
+                                        <option value="">北京市</option>
+                                        <option value="">福建省</option>
+                                        <option value="">山东省</option>
+                                        <option value="">湖北省</option>
+                                        <option value="">广东省</option>
+                                        <option value="">海南省</option>
+                                        <option value="">四川省</option>
+                                        <option value="">云南省</option>
+                                        <option value="">陕西省</option>
+                                        <option value="">青海省</option>
+                                        <option value="">新疆维吾尔自治区</option>
+                                        <option value="">澳门特别行政区</option>
+                                        <option value="">天津市</option>
+                                        <option value="">山西省</option>
+                                        <option value="">辽宁省</option>
+                                        <option value="">黑龙江省</option>
+                                        <option value="">江苏省</option>
+                                        <option value="">安徽省</option>
+                                        <option value="">江西省</option>
+                                        <option value="">河南省</option>
+                                        <option value="">湖南省</option>
+                                        <option value="">广西壮族自治区</option>
+                                        <option value="">重庆市</option>
+                                        <option value="">贵州省</option>
+                                        <option value="">西藏自治区</option>
+                                        <option value="">甘肃省</option>
+                                        <option value="">宁夏回族自治区</option>
+                                        <option value="">香港特别行政区</option>
+                                        <option value="">台湾省</option>
+                                        </select>
+                                        &emsp13;
+                                        <select name="city" id="c">
+                                        <option value="杭州市">杭州市</option>
+                                        <option value="">金华市</option>
+                                        <option value="">宁波市</option>
+                                        <option value="">衢州市</option>
+                                        <option value="">温州市</option>
+                                        <option value="">舟山市</option>
+                                        <option value="">嘉兴市</option>
+                                        <option value="">台州市</option>
+                                        <option value="">湖州市</option>
+                                        <option value="">丽水市</option>
+                                        <option value="">绍兴市</option>
+                                        </select>
+                                        &emsp13;
+                                        <select name="district" id="d">
+                                        <option value="上城区">上城区</option>
+                                        <option value="拱墅区">拱墅区</option>
+                                        <option value="西湖区">西湖区</option>
+                                        <option value="滨江区">滨江区</option>
+                                        <option value="萧山区">萧山区</option>
+                                        <option value="余杭区">余杭区</option>
+                                        <option value="富阳区">富阳区</option>
+                                        <option value="临安区">临安区</option>
+                                        <option value="临平区">临平区</option>
+                                        <option value="钱塘区">钱塘区</option>
+                                        <option value="建德市">建德市</option>
+                                        <option value="桐庐县">桐庐县</option>
+                                        <option value="淳安县">淳安县</option>
+                                    </select>
+                     <p><label>年</label><input type="text" name="year"></p>
+                     <p><label>月</label><input type="text" name="month"></p>
+                     <p><label>日</label><input type="text" name="day"></p>
+                     <p><label>隔离时长：</label><input type="text" name="time" value="14">天</p>
+                        <input type="submit" value="提交">
+                    </form>
+
+                     <footer><p>&nbsp;&nbsp;&nbsp;&nbsp;Welcome to <a href="https://www.zstu.edu.cn/">zstu.cn</a></p></footer>
+            </div>
+
+		  </div>
+            <!-- /. PAGE INNER  -->
+        </div>
+        <!-- /. PAGE WRAPPER  -->
+    </div>
+    <!-- /. WRAPPER  -->
+    <!-- JS Scripts-->
+    <!-- jQuery Js -->
+
+    <script src="{% static 'assets/js/jquery-1.10.2.js' %}"></script>
+    <!-- Bootstrap Js -->
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+
+    <!-- Metis Menu Js -->
+    <script src="{% static 'assets/js/jquery.metisMenu.js' %}"></script>
+    <!-- Morris Chart Js -->
+    <script src="{% static 'assets/js/morris/raphael-2.1.0.min.js' %}"></script>
+    <script src="{% static 'assets/js/morris/morris.js' %}"></script>
+    <script src="{% static 'assets/js/easypiechart.js' %}"></script>
+    <script src="{% static 'assets/js/easypiechart-data.js' %}"></script>
+     <script src="{% static 'assets/js/Lightweight-Chart/jquery.chart.js' %}"></script>
+       <!-- DATA TABLE SCRIPTS -->
+    <script src="{% static 'assets/js/dataTables/jquery.dataTables.js' %}"></script>
+      <script src="{% static 'assets/js/dataTables/dataTables.bootstrap.js' %}"></script>
+        <script>
+            $(document).ready(function () {
+                $('#dataTables-example').dataTable();
+            });
+    </script>
+    <!-- Custom Js -->
+    <script src="{% static 'assets/js/custom-scripts.js' %}"></script>
+    <script></script>
 </body>
+
 </html>

@@ -1,29 +1,191 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>注册</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>账号注册</title>
+    <!-- Bootstrap Styles-->
+    <link  href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet" />
+    <!-- FontAwesome Styles-->
+    <link  href="{% static 'assets/css/font-awesome.css' %}" rel="stylesheet" />
+    <!-- Morris Chart Styles-->
+     <link  href="{% static 'assets/js/morris/morris-0.4.3.min.css' %}" rel="stylesheet" />
+    <!-- Custom Styles-->
+     <link  href="{% static 'assets/css/custom-styles.css' %}" rel="stylesheet" />
+    <!-- Google Fonts-->
+    <link  href="{% static 'http://fonts.googleapis.com/css?family=Open+Sans' %}" rel="stylesheet" type='text/css'/>
+    <link  href="{% static 'assets/js/Lightweight-Chart/cssCharts.css' %}" rel="stylesheet" />
 </head>
 <body>
-<h1><a href="{% url "to_Login" %}">返回</a></h1>
-<form action="/register/" method="post">
-    {% csrf_token %}
-    <p><label>姓名</label><input type="text" name="name"></p>
-    <p><label>密码</label><input type="text" name="pwd"></p>
-    <p><label>身份</label><input type="text" name="identity"></p>
-    <p><label>入学年份/执教年份</label><input type="text" name="in_year"></p>
-    <p><label>班级</label><input type="text" name="classes"></p>
-    <p><label>宿舍</label><input type="text" name="dormitory"></p>
-    <p><label>手机号</label><input type="text" name="phone"></p>
-    <p><label>邮箱</label><input type="text" name="email"></p>
-    <p><input type="submit" id="submit" value="注册"></p>
-</form>
-{% if messages %}
-<script>
-    {% for msg in messages %}
-        alert('{{ msg.message }}');
-    {% endfor %}
-</script>
-{% endif %}
+    <div id="wrapper">
+        <nav class="navbar navbar-default top-navbar" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url "logout" %}"><strong>校园疫情管理系统</strong></a>
+		<div id="sideNav" href=""><i class="fa fa-caret-right"></i></div>
+            </div>
+
+        </nav>
+        <!--/. NAV TOP  -->
+        <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+                    <li>
+                        <a   href="{% url "logout" %}"><i class="fa fa-dashboard"></i> 首页</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'u_Login' %}"><i class="fa fa-desktop"></i> 用户登录</a>
+                    </li>
+					<li>
+                        <a   href="{% url 'a_Login' %}"><i class="fa fa-bar-chart-o"></i> 管理员登录</a>
+                    </li>
+                    <li>
+                        <a class="active-menu" href="{% url 'to_Register' %}"><i class="fa fa-qrcode"></i> 注册</a>
+                    </li>
+
+
+                </ul>
+            </div>
+        </nav>
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper" >
+		  <div class="header"> 
+                        <h1 class="page-header">
+                             校园疫情管理系统<small>请先注册您的账号</small>
+                        </h1>
+						<ol class="breadcrumb">
+					  <li><a href="#">浙江理工大学</a></li>
+					  <li><a href="#">校园疫情管理系统</a></li>
+					  <li class="active">账号注册</li>
+					</ol> 
+									
+		</div>
+		
+            <div id="page-inner"> 
+              <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            账号注册系统
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+
+                                        <form id="submit" action="/register/" method="post">
+                                            {% csrf_token %}
+                                        <div class="form-group">
+                                            <label>姓名</label>
+                                            <input class="form-control" name="name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>密码</label>
+                                            <input class="form-control" name="pwd">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>tips</label>
+                                            <p class="form-control-static">建议设置8位以上密码并结合数字以及字母（区分大小写）</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>身份选择</label>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="identity"  value="老师" >老师
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="identity"  value="学生">学生
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>入学年份</label>
+                                            <input class="form-control" name="in_year">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>tips</label>
+                                            <p class="form-control-static">只需输入年份，比如：2020</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>班级</label>
+                                            <input class="form-control" name="classes">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>tips</label>
+                                            <p class="form-control-static">格式：年级+班号，比如：1901</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>宿舍</label>
+                                            <input class="form-control" name="dormitory">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>tips</label>
+                                            <p class="form-control-static">格式：楼号+寝室号，比如：10-205</p>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>手机号</label>
+                                            <input class="form-control" name="phone">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>邮箱</label>
+                                            <input class="form-control" name="email">
+                                        </div>
+                                        <p><input type="submit" id="submit" class="btn btn-default"  value="注册">
+                                        <input type="reset" id="submit" class="btn btn-default"  value="重置"></p>
+
+                                        </form>
+                                          {% if messages %}
+                                        <script>
+                                            {% for msg in messages %}
+                                                alert('{{ msg.message }}');
+                                            {% endfor %}
+                                        </script>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                            <!-- /.row (nested) -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+          <footer><p>Welcome to <a href="https://www.zstu.edu.cn/">zstu.cn</a></p></footer>
+			</div>
+             <!-- /. PAGE INNER  -->
+            </div>
+         <!-- /. PAGE WRAPPER  -->
+        </div>
+     <!-- /. WRAPPER  -->
+    <!-- JS Scripts-->
+    <!-- jQuery Js -->
+      <script  src="{% static 'assets/js/jquery-1.10.2.js' %}"  ></script>
+
+      <!-- Bootstrap Js -->
+    <script  src="{% static 'assets/js/bootstrap.min.js' %}"  ></script>
+    <!-- Metis Menu Js -->
+    <script  src="{% static 'assets/js/jquery.metisMenu.js' %}"  ></script>
+
+      <!-- Custom Js -->
+    <script  src="{% static 'assets/js/custom-scripts.js' %}"  ></script>
+
+    
+   
 </body>
 </html>

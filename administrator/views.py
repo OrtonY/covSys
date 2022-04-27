@@ -123,7 +123,8 @@ def a_dayclock_info(request):
         if yes == 0:
             situation = "未打卡"
             clock_time = " "
-        l_info = {"u_id": line.u_id, "situation": situation, "c_time": clock_time}
+        name = Users.objects.get(u_id=line.u_id).u_name
+        l_info = {"u_id": line.u_id, "name": name, "situation": situation, "c_time": clock_time}
         t_info.append(l_info)
     return render(request, "a_dayclock_info.html", {'data': t_info})
 
@@ -132,7 +133,8 @@ def a_day_clock(request, u_id):
     t_info = []
     data = DailyClock.objects.filter(u_id=u_id).order_by('-id')
     for line in data:
-        l_info = [line.u_id, line.temperature, line.qrcode, line.emergency_phone, str(line.c_time)[:-6]]
+        name = Users.objects.get(u_id=line.u_id).u_name
+        l_info = [line.u_id, name, line.temperature, line.qrcode, line.emergency_phone, str(line.c_time)[:-6]]
         t_info.append(l_info)
     return render(request, 'a_day_clock.html', {'data': t_info})
 
@@ -155,10 +157,22 @@ def a_examine(request):
             situation = "未出门"
         else:
             situation = "已过期"
-        l_info = {"id": line.id, "u_id": line.u_id, "l_time": line.l_time, "reason": line.reason, "states": state,
+        name = Users.objects.get(u_id=line.u_id).u_name
+        l_info = {"id": line.id, "u_id": line.u_id, "name": name, "l_time": line.l_time, "reason": line.reason, "states": state,
                   "situation": situation}
         t_info.append(l_info)
     return render(request, 'a_examine.html', {'data': t_info})
+
+
+def to_a_f_examine(request, l_id):
+    return render(request, 'a_f_examine.html', {'l_id': l_id})
+
+
+def a_f_examine(request, l_id):
+    state = request.POST.get('value')
+    print(state)
+    Judge.objects.filter(id=l_id).update(state=state)
+    return HttpResponseRedirect(reverse('a_examine'))
 
 
 def a_t_quarantine(request):
@@ -169,7 +183,8 @@ def a_t_quarantine(request):
     else:
         data = TQuarantine.objects.all().order_by('-id')
     for line in data:
-        l_info = {"u_id": line.u_id, "q_location": line.q_location, "i_time": str(line.i_time)[:10],
+        name = Users.objects.get(u_id=line.u_id).u_name
+        l_info = {"u_id": line.u_id, "name": name, "q_location": line.q_location, "i_time": str(line.i_time)[:10],
                   "o_time": str(line.o_time)[:10]}
         t_info.append(l_info)
     return render(request, 'a_t_quarantine.html', {'data': t_info})
@@ -186,15 +201,17 @@ def to_a_quarantine_list_up(request):
     date = Healthcode.objects.filter(healthcode='yellow')
     t_info = []
     if u:
-        t_date = Quarantine.objects.filter(u_id=u)
+        t_date = Quarantine.objects.filter(u_id=u).order_by('-id')
         for l_line in t_date:
-            l_info = {'id': l_line.u_id, 'location': l_line.q_location, 'time': str(l_line.cancel_time)[:10]}
+            name = Users.objects.get(u_id=l_line.u_id).u_name
+            l_info = {'id': l_line.u_id, 'name': name, 'location': l_line.q_location, 'time': str(l_line.cancel_time)[:10]}
             t_info.append(l_info)
     else:
         for line in date:
             t_date = Quarantine.objects.filter(u_id=line.u_id)
             for l_line in t_date:
-                l_info = {'id': l_line.u_id, 'location': l_line.q_location, 'time': str(l_line.cancel_time)[:10]}
+                name = Users.objects.get(u_id=l_line.u_id).u_name
+                l_info = {'id': l_line.u_id, 'name': name, 'location': l_line.q_location, 'time': str(l_line.cancel_time)[:10]}
                 t_info.append(l_info)
     return render(request, 'a_quarantine_list_up.html', {'data': t_info})
 
@@ -205,12 +222,12 @@ def a_quarantine_up(request, u_id):
     now = get_now_time()
     Quarantine.objects.filter(u_id=u_id).update(q_location=q_location, cancel_time=cancel_time)
     t_id = Quarantine.objects.get(u_id=u_id).id
-    count = TQuarantine.objects.filter(t_id=t_id).count()
+    count = TQuarantine.objects.filter(id=t_id).count()
     if count == 0:
-        TQuarantine.objects.create(u_id=u_id, q_location=q_location, i_time=now, o_time=cancel_time, t_id=t_id)
+        TQuarantine.objects.create(u_id=u_id, q_location=q_location, i_time=now, o_time=cancel_time, id=t_id)
     else:
-        TQuarantine.objects.filter(u_id=u_id, t_id=t_id).update(q_location=q_location, o_time=cancel_time)
-    return HttpResponseRedirect(reverse('a_return'))
+        TQuarantine.objects.filter(u_id=u_id, id=t_id).update(q_location=q_location, o_time=cancel_time)
+    return HttpResponseRedirect(reverse('a_quarantine_list_up'))
 
 
 def to_a_passphrase_up(request):
@@ -221,7 +238,8 @@ def to_a_passphrase_up(request):
             passphrase = '无效'
         else:
             passphrase = '有效'
-        l_info = {"u_id": line.u_id, "passphrase": passphrase}
+        name = Users.objects.get(u_id=line.u_id).u_name
+        l_info = {"u_id": line.u_id, "name": name, "passphrase": passphrase}
         t_info.append(l_info)
     return render(request, 'a_passphrase_up.html', {'data': t_info})
 
@@ -241,7 +259,8 @@ def to_a_healthcode_up(request):
             healthcode = '绿色'
         else:
             healthcode = '黄色'
-        l_info = {"u_id": line.u_id, "healthcode": healthcode}
+        name = Users.objects.get(u_id=line.u_id).u_name
+        l_info = {"u_id": line.u_id, "name": name, "healthcode": healthcode}
         t_info.append(l_info)
     return render(request, 'a_healthcode_up.html', {'data': t_info})
 
@@ -311,38 +330,29 @@ def a_covlocation_up(request):
     return HttpResponseRedirect(reverse('to_a_covlocation_up'))
 
 
-def to_a_f_examine(request, l_id):
-    return render(request, 'a_f_examine.html', {'l_id': l_id})
-
-
-def a_f_examine(request, l_id):
-    state = request.POST.get('value')
-    print(state)
-    Judge.objects.filter(id=l_id).update(state=state)
-    return HttpResponseRedirect(reverse('a_examine'))
-
-
 def a_inout_query(request):
     u_id = request.POST.get('id', '')
     t_info = []
     if u_id:
         data = Iotable.objects.filter(u_id=u_id).order_by('-io_time')
-        for line in data:
-            if line.in_out == 1:
-                in_out = "进"
-            else:
-                in_out = "出"
-            l_info = [line.u_id, in_out, str(line.io_time)[:-6], line.door_id]
-            t_info.append(l_info)
     else:
-        data = Iotable.objects.all()
-        for line in data:
-            if line.in_out == 1:
-                in_out = "进"
-            else:
-                in_out = "出"
-            l_info = [line.u_id, in_out, str(line.io_time)[:-6], line.door_id]
-            t_info.append(l_info)
+        data = Iotable.objects.all().order_by('-io_time')
+    for line in data:
+        name = Users.objects.get(u_id=line.u_id).u_name
+        if line.in_out == 1:
+            in_out = "进"
+        else:
+            in_out = "出"
+        if line.door_id == '1':
+            door_id = '东门'
+        elif line.door_id == '2':
+            door_id = '南门'
+        elif line.door_id == '3':
+            door_id = '小北门'
+        else:
+            door_id = '大北门'
+        l_info = [line.u_id, name, in_out, str(line.io_time)[:-6], door_id]
+        t_info.append(l_info)
     return render(request, 'a_inout_query.html', {'data': t_info})
 
 
@@ -354,7 +364,8 @@ def a_t_schedule(request):
     else:
         data = USchedule.objects.all().order_by('-id')
     for line in data:
-        l_info = [line.u_id, line.location, str(line.o_time)[:-6]]
+        name = Users.objects.get(u_id=line.u_id).u_name
+        l_info = [line.u_id, name, line.location, str(line.o_time)[:-6]]
         t_info.append(l_info)
     return render(request, 'a_total_schedule.html', {'data': t_info})
 
@@ -367,6 +378,7 @@ def a_t_interfacciami(request):
     else:
         data = Interfacciami.objects.all().order_by('-id')
     for line in data:
-        l_info = [line.u_id, line.reason, str(line.time)[:-6]]
+        name = Users.objects.get(u_id=line.u_id).u_name
+        l_info = [line.u_id, name, line.reason, str(line.time)[:-6]]
         t_info.append(l_info)
-    return render(request, 'a_total_schedule.html', {'data': t_info})
+    return render(request, 'a_total_interfacciami.html', {'data': t_info})
