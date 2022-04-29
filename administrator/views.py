@@ -37,7 +37,7 @@ def a_return(request):
 
 
 def to_batch(request):
-    return render(request, "batch_upload.html")
+    return render(request, "a_navigation.html")
 
 
 def excel_upload(request):
@@ -52,11 +52,11 @@ def excel_upload(request):
                 with transaction.atomic():
                     for i in range(1, nrows):
                         rowValues = table.row_values(i)
-                        userinfo = Users(u_id=str(rowValues[0])[:-2], u_name=str(rowValues[1]),
+
+                        Users.objects.create(u_id=str(rowValues[0])[:-2], u_name=str(rowValues[1]),
                                          u_password=str(rowValues[2])[:-2], identity=str(rowValues[3]),
                                          phone=str(rowValues[6])[:-2],
                                          email=str(rowValues[7]))
-                        userinfo.save()
                         classinfo = Classes(u_id=str(rowValues[0])[:-2], classes=str(rowValues[4])[:-2])
                         dormitoryinfo = Dormitory(u_id=str(rowValues[0])[:-2], department=int(str(rowValues[5])[0:2]),
                                                   room_id=str(rowValues[5])[-3:])
@@ -67,7 +67,7 @@ def excel_upload(request):
                         healthinfo.save()
                         passphrase.save()
             except Exception as e:
-                messages.error(request, "数据存在错误....")
+                messages.error(request, "数据已存在或是存在错误....")
                 return HttpResponseRedirect(reverse('batch'))
                 # return HttpResponse('数据存在错误....')
 
@@ -284,7 +284,11 @@ def a_covlocation_up(request):
     c_month = request.POST.get('month', '')
     c_day = request.POST.get('day', '')
     c_time = int(request.POST.get('time', ''))
+    s_d = datetime.date(int(c_year), int(c_month), int(c_day))
+    s_dt = datetime.datetime.strptime(str(s_d), '%Y-%m-%d')
     data = USchedule.objects.raw("select * from u_schedule where location like %s", [covlocation])
+    Covarea.objects.create(location=p+c+d, s_time=s_dt, e_time=datetime.datetime.now())
+
     for line in data:
         o_year = int(line.o_time.year)
         o_month = int(line.o_time.month)
@@ -294,7 +298,6 @@ def a_covlocation_up(request):
         o_d = datetime.date(int(o_year), int(o_month), int(o_day))
         o_dt = datetime.datetime.strptime(str(o_d), '%Y-%m-%d')
         today = datetime.datetime.now()
-        print(type(s_dt), type(line.o_time), type(today))
         if s_dt < o_dt < today:
             Passphrase.objects.filter(u_id=line.u_id).update(passphrase='no')
             Healthcode.objects.filter(u_id=line.u_id).update(healthcode='yellow')

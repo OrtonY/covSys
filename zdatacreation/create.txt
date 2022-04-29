@@ -131,4 +131,12 @@ time datetime,
 FOREIGN KEY(u_id) references users (u_id)
 )ENGINE=InnoDB;
 
+
+#疫情地区表
+create table covarea(
+location varchar(200),
+s_time datetime,
+e_time datetime
+)ENGINE=InnoDB;
+
 insert into admin value('admin', 123456);

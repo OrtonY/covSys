@@ -26,6 +26,16 @@ class Classes(models.Model):
         db_table = 'classes'
 
 
+class Covarea(models.Model):
+    location = models.CharField(max_length=200, blank=True, null=True)
+    s_time = models.DateTimeField(blank=True, null=True)
+    e_time = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'covarea'
+
+
 class DailyClock(models.Model):
     u = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     temperature = models.FloatField(blank=True, null=True)
