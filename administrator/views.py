@@ -54,9 +54,9 @@ def excel_upload(request):
                         rowValues = table.row_values(i)
 
                         Users.objects.create(u_id=str(rowValues[0])[:-2], u_name=str(rowValues[1]),
-                                         u_password=str(rowValues[2])[:-2], identity=str(rowValues[3]),
-                                         phone=str(rowValues[6])[:-2],
-                                         email=str(rowValues[7]))
+                                             u_password=str(rowValues[2])[:-2], identity=str(rowValues[3]),
+                                             phone=str(rowValues[6])[:-2],
+                                             email=str(rowValues[7]))
                         classinfo = Classes(u_id=str(rowValues[0])[:-2], classes=str(rowValues[4])[:-2])
                         dormitoryinfo = Dormitory(u_id=str(rowValues[0])[:-2], department=int(str(rowValues[5])[0:2]),
                                                   room_id=str(rowValues[5])[-3:])
@@ -158,7 +158,8 @@ def a_examine(request):
         else:
             situation = "已过期"
         name = Users.objects.get(u_id=line.u_id).u_name
-        l_info = {"id": line.id, "u_id": line.u_id, "name": name, "l_time": line.l_time, "reason": line.reason, "states": state,
+        l_info = {"id": line.id, "u_id": line.u_id, "name": name, "l_time": line.l_time, "reason": line.reason,
+                  "states": state,
                   "situation": situation}
         t_info.append(l_info)
     return render(request, 'a_examine.html', {'data': t_info})
@@ -204,14 +205,16 @@ def to_a_quarantine_list_up(request):
         t_date = Quarantine.objects.filter(u_id=u).order_by('-id')
         for l_line in t_date:
             name = Users.objects.get(u_id=l_line.u_id).u_name
-            l_info = {'id': l_line.u_id, 'name': name, 'location': l_line.q_location, 'time': str(l_line.cancel_time)[:10]}
+            l_info = {'id': l_line.u_id, 'name': name, 'location': l_line.q_location,
+                      'time': str(l_line.cancel_time)[:10]}
             t_info.append(l_info)
     else:
         for line in date:
             t_date = Quarantine.objects.filter(u_id=line.u_id)
             for l_line in t_date:
                 name = Users.objects.get(u_id=l_line.u_id).u_name
-                l_info = {'id': l_line.u_id, 'name': name, 'location': l_line.q_location, 'time': str(l_line.cancel_time)[:10]}
+                l_info = {'id': l_line.u_id, 'name': name, 'location': l_line.q_location,
+                          'time': str(l_line.cancel_time)[:10]}
                 t_info.append(l_info)
     return render(request, 'a_quarantine_list_up.html', {'data': t_info})
 
@@ -287,7 +290,7 @@ def a_covlocation_up(request):
     s_d = datetime.date(int(c_year), int(c_month), int(c_day))
     s_dt = datetime.datetime.strptime(str(s_d), '%Y-%m-%d')
     data = USchedule.objects.raw("select * from u_schedule where location like %s", [covlocation])
-    Covarea.objects.create(location=p+c+d, s_time=s_dt, e_time=datetime.datetime.now())
+    Covarea.objects.create(location=p + c + d, s_time=s_dt, e_time=datetime.datetime.now())
 
     for line in data:
         o_year = int(line.o_time.year)
@@ -385,3 +388,29 @@ def a_t_interfacciami(request):
         l_info = [line.u_id, name, line.reason, str(line.time)[:-6]]
         t_info.append(l_info)
     return render(request, 'a_total_interfacciami.html', {'data': t_info})
+
+
+def updatemap(request):
+    from pyecharts import options as opts
+    from pyecharts.charts import Map
+
+    city_list = ["上城区", "下城区", "拱墅区", "西湖区", "滨江区", "萧山区", "余杭区", "富阳区", "临安市", "江干区", "建德市", "桐庐县", "淳安县"]
+
+    date = Covarea.objects.raw("select * from covarea where ")
+
+    todaydate = [100, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    today = get_now_time()
+    c_today = (
+        Map()
+            .add("杭州疫情区域",
+                 [list(z) for z in zip(city_list, todaydate)],
+                 maptype="杭州")
+            .set_global_opts(
+            title_opts=opts.TitleOpts(title="杭州疫情区域   {}".format(str(today)[:10])),
+            visualmap_opts=opts.VisualMapOpts(range_text=['风险地区', '暂无风险地区'],
+                                              border_color="#000")
+        )
+            .render("templates/map.html")
+    )
+
+    return render(request, 'map.html', locals())

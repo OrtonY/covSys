@@ -248,5 +248,4 @@ def u_my_schedule(request, u_id):
     for line in data:
         l_info = [line.location, str(line.o_time)[:-6]]
         t_info.append(l_info)
-    return render(request, 'u_my_schedule.html', {'data': t_info, 'id':u_id})
-
+    return render(request, 'u_my_schedule.html', {'data': t_info, 'id': u_id})

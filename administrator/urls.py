@@ -26,4 +26,5 @@ urlpatterns = [
     path('a_covlocation_up/', views.a_covlocation_up, name="a_covlocation_up"),
     path('a_t_schedule/', views.a_t_schedule, name="a_t_schedule"),
     path('a_t_interfacciami/', views.a_t_interfacciami, name="a_t_interfacciami"),
+    path('updatemap/', views.updatemap, name="updatemap"),
 ]
