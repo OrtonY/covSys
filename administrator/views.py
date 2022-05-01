@@ -395,22 +395,28 @@ def updatemap(request):
     from pyecharts.charts import Map
 
     city_list = ["上城区", "下城区", "拱墅区", "西湖区", "滨江区", "萧山区", "余杭区", "富阳区", "临安市", "江干区", "建德市", "桐庐县", "淳安县"]
+    todaydate = []
+    now_time = get_now_time()
+    now = str(now_time)[:10]
+    date = Covarea.objects.raw("select * from covarea where s_time < %s and e_time > %s", [now, now])
+    for i in city_list:
+        for line in date:
+            if i in line.location:
+                todaydate.append(1)
+                break
+        todaydate.append(0)
 
-    date = Covarea.objects.raw("select * from covarea where ")
-
-    todaydate = [100, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    today = get_now_time()
     c_today = (
         Map()
             .add("杭州疫情区域",
                  [list(z) for z in zip(city_list, todaydate)],
                  maptype="杭州")
             .set_global_opts(
-            title_opts=opts.TitleOpts(title="杭州疫情区域   {}".format(str(today)[:10])),
-            visualmap_opts=opts.VisualMapOpts(range_text=['风险地区', '暂无风险地区'],
-                                              border_color="#000")
+            title_opts=opts.TitleOpts(title="杭州疫情区域   {}".format(now)),
+            visualmap_opts=opts.VisualMapOpts(max_=1, range_text=['风险地区', '暂无风险地区'], border_color="#000")
         )
             .render("templates/map.html")
     )
 
-    return render(request, 'map.html', locals())
+    # return render(request, 'map.html', locals())
+    return HttpResponseRedirect(reverse('a_return'))

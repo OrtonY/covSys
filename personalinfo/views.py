@@ -75,6 +75,10 @@ def get_now_time():
     return now
 
 
+def show_covmap(request):
+    return render(request, 'map.html')
+
+
 def monitor(request):
     # 监测出入校门
     now_time = get_now_time()

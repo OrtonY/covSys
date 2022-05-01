@@ -134,6 +134,7 @@ FOREIGN KEY(u_id) references users (u_id)
 
 #疫情地区表
 create table covarea(
+id int auto_increment primary key,
 location varchar(200),
 s_time datetime,
 e_time datetime

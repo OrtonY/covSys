@@ -6,5 +6,6 @@ urlpatterns = [
     path('toregister/', views.toRegister, name="to_Register"),
     path('register/', views.Register, name="Register"),
     path('logout/', views.logout, name="logout"),
+    path('map/', views.show_covmap, name="map"),
     path('monitor/', views.monitor, name="monitor"),
 ]

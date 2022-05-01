@@ -16,6 +16,7 @@
     <!-- Google Fonts-->
     <link  href="{% static 'http://fonts.googleapis.com/css?family=Open+Sans' %}" rel="stylesheet" type='text/css'/>
     <link  href="{% static 'assets/js/Lightweight-Chart/cssCharts.css' %}" rel="stylesheet" />
+        <script src="{% static 'echarts.min.js' %}"></script>
 </head>
 <body>
     <div id="wrapper">
@@ -285,6 +286,9 @@
                        <li>
                         <a  href="{% url 'a_t_interfacciami' %}"><i class="fa fa-edit"></i> 违规记录总表 </a>
                     </li>
+                    <li>
+                        <a  href="{% url 'map' %}"><i class="fa fa-edit"></i> 当日疫情地图 </a>
+                    </li>
 
                 </ul>
             </div>
@@ -300,21 +304,59 @@
 					  <li><a href="#">校园疫情管理系统</a></li>
 					  <li class="active">首页</li>
 					</ol>
-           <div class="panel panel-default">
-               <form action="{% url 'batch_upload' %}" method="post" enctype="multipart/form-data">
-                   {% csrf_token %}
-                   <input type="file" name="my_file">
-                   <input type="submit">
-               </form>
-               {% if messages %}
-                   <script>
-                       {% for msg in messages %}
-                           alert('{{ msg.message }}');
-                       {% endfor %}
-                   </script>
-               {% endif %}
-           </div>
-		</div>
+              <div class="panel panel-default">
+                  <form action="{% url 'batch_upload' %}" method="post" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      <input type="file" name="my_file">
+                      <input type="submit">
+                  </form>
+
+                  {% if messages %}
+                      <script>
+                          {% for msg in messages %}
+                              alert('{{ msg.message }}');
+                          {% endfor %}
+                      </script>
+                  {% endif %}
+
+                  <div id="container" style="height: 500%;width: 50% "></div>
+                  <script type="text/javascript" src="{% static 'echarts.min.js' %}"></script>
+                  <script type="text/javascript">
+                      var dom = document.getElementById("container");
+                      var myChart = echarts.init(dom);
+                      var app = {};
+                      var option;
+                      option = {
+                          title:{
+                              text:'近七天打卡状况'
+                          },
+                          xAxis: {
+                              type: 'category',
+                              data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                          },
+                          yAxis: {
+                              type: 'value'
+                          },
+                          series: [
+                              {
+                                  data: [120, 200, 150, 80, 70, 110, 130],
+                                  type: 'bar',
+                                  showBackground: true,
+                                  backgroundStyle: {
+                                      color: 'rgba(180, 180, 180, 0.2)'
+                                  }
+                              }
+                          ]
+                      };
+
+                      if (option && typeof option === 'object') {
+                          myChart.setOption(option);
+                      }
+                  </script>
+              <a href="{% url 'updatemap' %}" class="btn btn-success btn-lg">更新地图</a>
+              </div>
+          </div>
+
                 <!-- /. ROW  -->
             <footer><p>Welcome to <a href="https://www.zstu.edu.cn/">zstu.com</a></p></footer>
 

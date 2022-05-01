@@ -285,6 +285,9 @@
                        <li>
                         <a  href="{% url 'a_t_interfacciami' %}"><i class="fa fa-edit"></i> 违规记录总表 </a>
                     </li>
+                    <li>
+                        <a  href="{% url 'map' %}"><i class="fa fa-edit"></i> 当日疫情地图 </a>
+                    </li>
 
                 </ul>
             </div>
@@ -362,19 +365,19 @@
                                         &emsp13;
                                         <select name="district" id="d">
                                         <option value="上城区">上城区</option>
+                                        <option value="下城区">下城区</option>
                                         <option value="拱墅区">拱墅区</option>
                                         <option value="西湖区">西湖区</option>
                                         <option value="滨江区">滨江区</option>
                                         <option value="萧山区">萧山区</option>
                                         <option value="余杭区">余杭区</option>
                                         <option value="富阳区">富阳区</option>
-                                        <option value="临安区">临安区</option>
-                                        <option value="临平区">临平区</option>
-                                        <option value="钱塘区">钱塘区</option>
+                                        <option value="临安市">临安市</option>
+                                        <option value="江干区">江干区</option>
                                         <option value="建德市">建德市</option>
                                         <option value="桐庐县">桐庐县</option>
                                         <option value="淳安县">淳安县</option>
-                                    </select>
+                                        </select>
                      <p><label>年</label><input type="text" name="year"></p>
                      <p><label>月</label><input type="text" name="month"></p>
                      <p><label>日</label><input type="text" name="day"></p>
