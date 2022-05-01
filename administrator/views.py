@@ -19,7 +19,8 @@ def a_Login(request):
             # value = {"name": a_name}
             # return HttpResponse("欢迎admin 管理员登入校园疫情防控信息管理系统".format(a_name))
             # return render(request, 'a_navigation.html')
-            value = {"id": user}
+            date = u_count()
+            value = {"id": user, 'date': date}
             return render(request, 'a_navigation.html', context=value)
         else:
             messages.error(request, "管理员账号或密码有误")
@@ -32,7 +33,8 @@ def a_Login(request):
 
 
 def a_return(request):
-    value = {"id": 'admin'}
+    date = u_count()
+    value = {"id": 'admin', 'date': date}
     return render(request, 'a_navigation.html', context=value)
 
 
@@ -287,6 +289,7 @@ def a_covlocation_up(request):
     c_month = request.POST.get('month', '')
     c_day = request.POST.get('day', '')
     c_time = int(request.POST.get('time', ''))
+    c_location = request.POST.get('location', '')
     s_d = datetime.date(int(c_year), int(c_month), int(c_day))
     s_dt = datetime.datetime.strptime(str(s_d), '%Y-%m-%d')
     data = USchedule.objects.raw("select * from u_schedule where location like %s", [covlocation])
@@ -308,9 +311,9 @@ def a_covlocation_up(request):
             now = get_now_time()
             if count == 0:
                 c_date = (datetime.date.today() + relativedelta(days=c_time)).strftime("%Y-%m-%d")
-                Quarantine.objects.create(u_id=line.u_id, q_location='校医院', cancel_time=c_date)
+                Quarantine.objects.create(u_id=line.u_id, q_location=c_location, cancel_time=c_date)
                 t_id = Quarantine.objects.get(u_id=line.u_id).id
-                TQuarantine.objects.create(u_id=line.u_id, q_location='校医院', i_time=now, o_time=c_date, t_id=t_id)
+                TQuarantine.objects.create(u_id=line.u_id, q_location=c_location, i_time=now, o_time=c_date, t_id=t_id)
             classes = Classes.objects.get(u_id=line.u_id).classes
             dep = Dormitory.objects.get(u_id=line.u_id).department
             r_id = Dormitory.objects.get(u_id=line.u_id).room_id
@@ -320,18 +323,18 @@ def a_covlocation_up(request):
                 count = Quarantine.objects.filter(u_id=i.u_id).count()
                 if count == 0:
                     c_date = (datetime.date.today() + relativedelta(days=c_time)).strftime("%Y-%m-%d")
-                    Quarantine.objects.create(u_id=i.u_id, q_location='校医院', cancel_time=c_date)
+                    Quarantine.objects.create(u_id=i.u_id, q_location=c_location, cancel_time=c_date)
                     t_id = Quarantine.objects.get(u_id=i.u_id).id
-                    TQuarantine.objects.create(u_id=i.u_id, q_location='校医院', i_time=now, o_time=c_date, t_id=t_id)
+                    TQuarantine.objects.create(u_id=i.u_id, q_location=c_location, i_time=now, o_time=c_date, t_id=t_id)
             for i in Dormitory.objects.filter(department=dep, room_id=r_id):
                 Passphrase.objects.filter(u_id=i.u_id).update(passphrase='no')
                 Healthcode.objects.filter(u_id=i.u_id).update(healthcode='yellow')
                 count = Quarantine.objects.filter(u_id=i.u_id).count()
                 if count == 0:
                     c_date = (datetime.date.today() + relativedelta(days=c_time)).strftime("%Y-%m-%d")
-                    Quarantine.objects.create(u_id=i.u_id, q_location='校医院', cancel_time=c_date)
+                    Quarantine.objects.create(u_id=i.u_id, q_location=c_location, cancel_time=c_date)
                     t_id = Quarantine.objects.get(u_id=i.u_id).id
-                    TQuarantine.objects.create(u_id=i.u_id, q_location='校医院', i_time=now, o_time=c_date, t_id=t_id)
+                    TQuarantine.objects.create(u_id=i.u_id, q_location=c_location, i_time=now, o_time=c_date, t_id=t_id)
 
     return HttpResponseRedirect(reverse('to_a_covlocation_up'))
 
