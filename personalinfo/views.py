@@ -80,32 +80,6 @@ def show_covmap(request):
     return render(request, 'map.html')
 
 
-def u_count():
-    t_info = {}
-    data = []
-    num = []
-    t_id = Users.objects.all()
-    for i in range(7):
-        c_date = (datetime.date.today() - relativedelta(days=i)).strftime("%Y-%m-%d")
-        d_id = DailyClock.objects.raw("select * from daily_clock where c_time like %s", [c_date])
-        a_count = 0
-        n_count = 0
-        for line in t_id:
-            yes = 0
-            for line1 in d_id:
-                if line.u_id == line1.u_id:
-                    yes = 1
-                    a_count = a_count + 1
-                    break
-            if yes == 0:
-                n_count = n_count + 1
-                print('no')
-        data.append(c_date)
-        num.append(a_count)
-    t_info = {'date': data, 'num': num}
-    return t_info
-
-
 def monitor(request):
     # 监测出入校门
     now_time = get_now_time()

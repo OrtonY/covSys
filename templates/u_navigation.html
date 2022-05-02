@@ -27,7 +27,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{% url "a_return" %}"><strong>校园疫情管理系统</strong></a>
+                <a class="navbar-brand" href="{% url "u_return" id %}"><strong>校园疫情管理系统</strong></a>
 		<div id="sideNav" href=""><i class="fa fa-caret-right"></i></div>
             </div>
 
@@ -278,7 +278,7 @@
 		<div id="page-wrapper">
 		  <div class="header">
                         <h1 class="page-header">
-                            首页 <small>欢迎管理员登入校园疫情防控信息管理系统</small>
+                            首页 <small>欢迎{{ name }}{{ identity }}登入校园疫情防控信息管理系统</small>
                         </h1>
 						<ol class="breadcrumb">
 					  <li><a href="#">浙江理工大学</a></li>

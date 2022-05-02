@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>隔离信息修改</title>
+    <title>疫情地点上传</title>
     <!-- Bootstrap Styles-->
     <link  href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet" />
     <!-- FontAwesome Styles-->
@@ -248,28 +248,28 @@
                         <a  href="{% url "a_return" %}"><i class="fa fa-dashboard"></i> 首页</a>
                     </li>
                     <li>
-                        <a  href="{% url "a_u_info" %}"><i class="fa fa-desktop"></i> 学生信息查询</a>
+                        <a href="{% url "a_u_info" %}"><i class="fa fa-desktop"></i> 学生信息查询</a>
                     </li>
 					<li>
                         <a href="{% url "a_inout_query" %}"><i class="fa fa-bar-chart-o"></i> 进出记录查询</a>
                     </li>
                     <li>
-                        <a href="{% url 'a_dayclock_info' %}"><i class="fa fa-qrcode"></i> 每日打卡</a>
+                        <a  href="{% url 'a_dayclock_info' %}"><i class="fa fa-qrcode"></i> 每日打卡</a>
                     </li>
                     <li>
-                        <a href="{% url 'a_examine' %}"><i class="fa fa-table"></i> 外出审批</a>
+                        <a  href="{% url 'a_examine' %}"><i class="fa fa-table"></i> 外出审批</a>
                     </li>
                     <li>
-                        <a  href="{% url 'to_a_covlocation_up' %}"><i class="fa fa-edit"></i> 疫情地点上传 </a>
+                        <a  class="active-menu"  href="{% url 'to_a_covlocation_up' %}"><i class="fa fa-edit"></i> 疫情地点上传 </a>
                     </li>
                       <li>
-                        <a class="active-menu"  href="{% url 'a_quarantine_list_up' %}"><i class="fa fa-edit"></i> 隔离数据修改 </a>
+                        <a  href="{% url 'a_quarantine_list_up' %}"><i class="fa fa-edit"></i> 隔离数据修改 </a>
                     </li>
-                        <li>
+                     <li>
                         <a href="#"><i class="fa fa-sitemap"></i> 异常双码修改<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="{% url 'to_a_passphrase_up' %}">异常通行码修改</a>
+                                <a  href="{% url 'to_a_passphrase_up' %}">异常通行码修改</a>
                             </li>
                             <li>
                                  <a href="{% url 'to_a_healthcode_up' %}">异常健康码修改</a>
@@ -288,6 +288,7 @@
                     <li>
                         <a  href="{% url 'map' %}"><i class="fa fa-edit"></i> 当日疫情地图 </a>
                     </li>
+
                 </ul>
             </div>
         </nav>
@@ -295,49 +296,96 @@
 		<div id="page-wrapper">
 		  <div class="header">
                         <h1 class="page-header">
-                      <small>欢迎管理员使用校园疫情防控信息管理系统</small>
+                            <small>欢迎管理员使用校园疫情防控信息管理系统</small>
                         </h1>
 						<ol class="breadcrumb">
 					  <li><a href="#">浙江理工大学</a></li>
 					  <li><a href="#">校园疫情管理系统</a></li>
-					  <li class="active">隔离数据修改</li>
+					  <li class="active">疫情地点上传</li>
 					</ol>
-                   <div class="col-md-12">
+
+
+              <div class="row">
+                <div class="col-md-12">
                     <!-- Advanced Tables -->
                     <div class="panel panel-default">
-                        <div class="panel-heading">
-                             隔离数据修改
-                        </div>
-                        <div class="panel-body">
-                            <div class="table-responsive">
-                            <a href="{% url 'to_a_alter_quarantine' %}" class="btn btn-success btn-lg">批量修改数据</a>
-                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
-                                    <thead>
-                                        <tr>
-                                            <th>学号</th>
-                                            <th>姓名</th>
-                                            <th>隔离地点</th>
-                                            <th>解除时间 </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for line in data %}
-                                        <tr>
-                                            <th><a href="{% url 'to_a_quarantine_up' line.id %}">{{ line.id }}</a></th>
-                                            <th>{{ line.name }}</th>
-                                            <th>{{ line.location }}</th>
-                                            <th>{{ line.time }}</th>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
+                     <form action="/a_alter_quarantine/" method="post">
+                        {% csrf_token %}
+                            <tr>疫情地点:</tr>
+                                     <select name="province" id="p">
+                                        <option value="浙江省">浙江省</option>
+                                        <option value="">河北省</option>
+                                        <option value="">内蒙古自治区</option>
+                                        <option value="">吉林省</option>
+                                        <option value="">上海市</option>
+                                        <option value="">北京市</option>
+                                        <option value="">福建省</option>
+                                        <option value="">山东省</option>
+                                        <option value="">湖北省</option>
+                                        <option value="">广东省</option>
+                                        <option value="">海南省</option>
+                                        <option value="">四川省</option>
+                                        <option value="">云南省</option>
+                                        <option value="">陕西省</option>
+                                        <option value="">青海省</option>
+                                        <option value="">新疆维吾尔自治区</option>
+                                        <option value="">澳门特别行政区</option>
+                                        <option value="">天津市</option>
+                                        <option value="">山西省</option>
+                                        <option value="">辽宁省</option>
+                                        <option value="">黑龙江省</option>
+                                        <option value="">江苏省</option>
+                                        <option value="">安徽省</option>
+                                        <option value="">江西省</option>
+                                        <option value="">河南省</option>
+                                        <option value="">湖南省</option>
+                                        <option value="">广西壮族自治区</option>
+                                        <option value="">重庆市</option>
+                                        <option value="">贵州省</option>
+                                        <option value="">西藏自治区</option>
+                                        <option value="">甘肃省</option>
+                                        <option value="">宁夏回族自治区</option>
+                                        <option value="">香港特别行政区</option>
+                                        <option value="">台湾省</option>
+                                        </select>
+                                        &emsp13;
+                                        <select name="city" id="c">
+                                        <option value="杭州市">杭州市</option>
+                                        <option value="">金华市</option>
+                                        <option value="">宁波市</option>
+                                        <option value="">衢州市</option>
+                                        <option value="">温州市</option>
+                                        <option value="">舟山市</option>
+                                        <option value="">嘉兴市</option>
+                                        <option value="">台州市</option>
+                                        <option value="">湖州市</option>
+                                        <option value="">丽水市</option>
+                                        <option value="">绍兴市</option>
+                                        </select>
+                                        &emsp13;
+                                        <select name="district" id="d">
+                                        <option value="上城区">上城区</option>
+                                        <option value="下城区">下城区</option>
+                                        <option value="拱墅区">拱墅区</option>
+                                        <option value="西湖区">西湖区</option>
+                                        <option value="滨江区">滨江区</option>
+                                        <option value="萧山区">萧山区</option>
+                                        <option value="余杭区">余杭区</option>
+                                        <option value="富阳区">富阳区</option>
+                                        <option value="临安市">临安市</option>
+                                        <option value="江干区">江干区</option>
+                                        <option value="建德市">建德市</option>
+                                        <option value="桐庐县">桐庐县</option>
+                                        <option value="淳安县">淳安县</option>
+                                        </select>
+                     <p><label>隔离时长：</label><input type="text" name="time" value="14">天</p>
+                         <p><label>隔离地点：</label><input type="text" name="location" value="校医院"></p>
+                        <input type="submit" value="提交">
+                    </form>
 
-                        </div>
-                    </div>
-                    <!--End Advanced Tables -->
-                </div>
-  <footer><p>&nbsp;&nbsp;&nbsp;&nbsp;Welcome to <a href="https://www.zstu.edu.cn/">zstu.cn</a></p></footer>
+                     <footer><p>&nbsp;&nbsp;&nbsp;&nbsp;Welcome to <a href="https://www.zstu.edu.cn/">zstu.cn</a></p></footer>
+            </div>
+
 		  </div>
             <!-- /. PAGE INNER  -->
         </div>
@@ -358,10 +406,10 @@
     <script src="{% static 'assets/js/morris/morris.js' %}"></script>
     <script src="{% static 'assets/js/easypiechart.js' %}"></script>
     <script src="{% static 'assets/js/easypiechart-data.js' %}"></script>
-    <script src="{% static 'assets/js/Lightweight-Chart/jquery.chart.js' %}"></script>
-    <!-- DATA TABLE SCRIPTS -->
+     <script src="{% static 'assets/js/Lightweight-Chart/jquery.chart.js' %}"></script>
+       <!-- DATA TABLE SCRIPTS -->
     <script src="{% static 'assets/js/dataTables/jquery.dataTables.js' %}"></script>
-    <script src="{% static 'assets/js/dataTables/dataTables.bootstrap.js' %}"></script>
+      <script src="{% static 'assets/js/dataTables/dataTables.bootstrap.js' %}"></script>
         <script>
             $(document).ready(function () {
                 $('#dataTables-example').dataTable();

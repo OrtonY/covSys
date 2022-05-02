@@ -19,9 +19,10 @@ def a_Login(request):
             # value = {"name": a_name}
             # return HttpResponse("欢迎admin 管理员登入校园疫情防控信息管理系统".format(a_name))
             # return render(request, 'a_navigation.html')
-            date = u_count()
-            value = {"id": user, 'date': date}
-            return render(request, 'a_navigation.html', context=value)
+            # date = u_count()
+            # value = {"id": user, 'date': date}
+            # return render(request, 'a_navigation.html', context=value)
+            return HttpResponseRedirect(reverse('a_return'))
         else:
             messages.error(request, "管理员账号或密码有误")
             return HttpResponseRedirect(reverse('a_Login'))
@@ -33,9 +34,26 @@ def a_Login(request):
 
 
 def a_return(request):
-    date = u_count()
-    value = {"id": 'admin', 'date': date}
-    return render(request, 'a_navigation.html', context=value)
+    data = []
+    num = []
+    t_id = Users.objects.all()
+    for i in range(7):
+        c_date = (datetime.date.today() - relativedelta(days=i)).strftime("%Y-%m-%d")
+        d_id = DailyClock.objects.raw("select * from daily_clock where c_time like %s", [c_date+"%%"])
+        a_count = 0
+        for line in t_id:
+            yes = 0
+            for line1 in d_id:
+                if line.u_id == line1.u_id:
+                    yes = 1
+                    a_count = a_count + 1
+                    print(line1.u_id)
+                    break
+        data.append(c_date)
+        num.append(a_count)
+    date = list(data)
+    num = list(num)
+    return render(request, 'a_navigation.html', {"id": 'admin', 'date': date, 'num': num})
 
 
 def to_batch(request):
@@ -337,6 +355,31 @@ def a_covlocation_up(request):
                     TQuarantine.objects.create(u_id=i.u_id, q_location=c_location, i_time=now, o_time=c_date, t_id=t_id)
 
     return HttpResponseRedirect(reverse('to_a_covlocation_up'))
+
+
+def to_a_alter_quarantine(request):
+    return render(request, "a_quarantine_loadup.html")
+
+
+def a_alter_quarantine(request):
+    p = request.POST.get('province', '')
+    c = request.POST.get('city', '')
+    d = request.POST.get('district', '')
+    covlocation = p + c + d + "%%"
+    c_time = int(request.POST.get('time', ''))
+    c_location = request.POST.get('location', '')
+    data = USchedule.objects.raw("select * from u_schedule where location like %s", [covlocation])
+    for line in data:
+        if_exit = Quarantine.objects.filter(u_id=line.u_id).count()
+        if if_exit > 0:
+            start_id = Quarantine.objects.get(u_id=line.u_id).id
+            start_time = TQuarantine.objects.get(t_id=start_id).i_time
+            c_date = (start_time + relativedelta(days=c_time)).strftime("%Y-%m-%d")
+            date01 = TQuarantine.objects.filter(i_time=start_time)
+            date01.update(o_time=c_date, q_location=c_location)
+            for line01 in date01:
+                Quarantine.objects.filter(id=line01.t_id).update(cancel_time=c_date, q_location=c_location)
+    return HttpResponseRedirect(reverse('a_quarantine_list_up'))
 
 
 def a_inout_query(request):

@@ -81,7 +81,8 @@ def u_info(request, u_id):
 
 def to_u_schedul(request, u_id):
     time = get_now_time()
-    value = {'id': u_id, 'time': str(time)}
+    data = Users.objects.get(u_id=u_id)
+    value = {'id': u_id, 'name': data.u_name, 'identity': data.identity, 'time': str(time)}
     return render(request, 'u_schedul.html', context=value)
 
 
@@ -99,7 +100,8 @@ def u_schedul(request, u_id):
 
 
 def to_u_go_out(request, u_id):
-    value = {'id': u_id}
+    data = Users.objects.get(u_id=u_id)
+    value = {'id': u_id, "name": data.u_name, "identity": data.identity}
     return render(request, 'u_go_out.html', context=value)
 
 
@@ -114,7 +116,8 @@ def u_go_out(request, u_id):
 
 
 def to_u_covid_test(request, u_id):
-    value = {'id': u_id}
+    data = Users.objects.get(u_id=u_id)
+    value = {'id': u_id, "name": data.u_name, "identity": data.identity}
     return render(request, 'u_covid_test.html', context=value)
 
 
@@ -148,7 +151,8 @@ def to_u_daycard(request, u_id):
         code = "黄码"
     else:
         code = "红码"
-    value = {'id': u_id, 'time': str(time), 'code': code, 'b_time': str(be_time)[:-6]}
+    data = Users.objects.get(u_id=u_id)
+    value = {'id': u_id, "name": data.u_name, "identity": data.identity, 'time': str(time), 'code': code, 'b_time': str(be_time)[:-6]}
     return render(request, 'u_daycard.html', context=value)
 
 
@@ -187,8 +191,9 @@ def u_daycard(request, u_id):
 
 
 def to_u_inout_door(request, u_id):
+    data = Users.objects.get(u_id=u_id)
     time = get_now_time()
-    value = {'id': u_id, 'time': str(time)}
+    value = {'id': u_id, "name": data.u_name, "identity": data.identity, 'time': str(time)}
     return render(request, 'u_inout_door.html', context=value)
 
 
@@ -239,7 +244,8 @@ def u_interfacciami(request, u_id):
     for line in data:
         l_info = [line.reason, str(line.time)[:-6]]
         t_info.append(l_info)
-    return render(request, 'u_interfacciami.html', {'data': t_info, 'id': u_id})
+    data = Users.objects.get(u_id=u_id)
+    return render(request, 'u_interfacciami.html', {'data': t_info, 'id': u_id, "name": data.u_name, "identity": data.identity})
 
 
 def u_my_schedule(request, u_id):
@@ -248,4 +254,5 @@ def u_my_schedule(request, u_id):
     for line in data:
         l_info = [line.location, str(line.o_time)[:-6]]
         t_info.append(l_info)
-    return render(request, 'u_my_schedule.html', {'data': t_info, 'id': u_id})
+    data = Users.objects.get(u_id=u_id)
+    return render(request, 'u_my_schedule.html', {'data': t_info, 'id': u_id, "name": data.u_name, "identity": data.identity})

@@ -66,8 +66,8 @@
 					</ol>
               <form action="{% url 'u_nav' %}" method="post">
                   {% csrf_token %}
-                  <p><label>账号：</label><input name="user"/></p>
-                  <p><label>密码：</label><input name="pwd"/></p>
+                  <p><label>用&nbsp&nbsp&nbsp户：</label><input name="user"/></p>
+                  <p><label>密&nbsp&nbsp&nbsp码：</label><input name="pwd"/></p>
                   <input type="submit" value="提交">
               </form>
               {% if messages %}
