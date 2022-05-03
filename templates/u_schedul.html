@@ -373,6 +373,13 @@
                     
                     <p style="text-align: center;"><input type="submit" id="submit" value="提交"></p>
                     </form>
+                {% if messages %}
+                    <script>
+                        {% for msg in messages %}
+                            alert('{{ msg.message }}');
+                        {% endfor %}
+                    </script>
+                {% endif %}
             </table>
         </div>
         <footer><p>&nbsp;&nbsp;&nbsp;&nbsp;Welcome to <a href="https://www.zstu.edu.cn/">zstu.cn</a></p></footer>

@@ -87,16 +87,24 @@ def to_u_schedul(request, u_id):
 
 
 def u_schedul(request, u_id):
-    time = get_now_time()
-    p = request.POST.get('province', '')
-    c = request.POST.get('city', '')
-    d = request.POST.get('district', '')
-    l = request.POST.get('location', '')
-    schedule = USchedule(u_id=u_id, location=p + c + d + l, o_time=time)
-    schedule.save()
-    data = Users.objects.get(u_id=u_id)
-    value = {"id": data.u_id, "name": data.u_name, "identity": data.identity}
-    return render(request, 'u_navigation.html', context=value)
+    is_out = Iotable.objects.filter(u_id=u_id, state=0).count()
+    if is_out > 0:
+        time = get_now_time()
+        p = request.POST.get('province', '')
+        c = request.POST.get('city', '')
+        d = request.POST.get('district', '')
+        l = request.POST.get('location', '')
+        schedule = USchedule(u_id=u_id, location=p + c + d + l, o_time=time)
+        schedule.save()
+        data = Users.objects.get(u_id=u_id)
+        value = {"id": data.u_id, "name": data.u_name, "identity": data.identity}
+        return render(request, 'u_navigation.html', context=value)
+    else:
+        messages.error(request, "你还未出门")
+        time = get_now_time()
+        data = Users.objects.get(u_id=u_id)
+        value = {'id': u_id, 'name': data.u_name, 'identity': data.identity, 'time': str(time)}
+        return render(request, 'u_schedul.html', context=value)
 
 
 def to_u_go_out(request, u_id):
