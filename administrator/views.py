@@ -88,19 +88,19 @@ def excel_upload(request):
                         passphrase.save()
             except Exception as e:
                 messages.error(request, "数据已存在或是存在错误....")
-                return HttpResponseRedirect(reverse('batch'))
+                return HttpResponseRedirect(reverse('a_return'))
                 # return HttpResponse('数据存在错误....')
 
             messages.error(request, "上传成功")
-            return HttpResponseRedirect(reverse('batch'))
+            return HttpResponseRedirect(reverse('a_return'))
             # return HttpResponse('上传成功')
 
         messages.error(request, "上传文件格式不是xls")
-        return HttpResponseRedirect(reverse('batch'))
+        return HttpResponseRedirect(reverse('a_return'))
         # return HttpResponse('上传文件格式不是xls')
 
     messages.error(request, "不是post请求")
-    return HttpResponseRedirect(reverse('batch'))
+    return HttpResponseRedirect(reverse('a_return'))
     # return HttpResponse('不是post请求')
 
 
