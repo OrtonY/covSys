@@ -107,7 +107,7 @@ def monitor(request):
     # 监测每日打卡
     now_time = get_now_time()
     now_time = datetime.datetime.strptime(str(now_time), "%Y-%m-%d %H:%M:%S")
-    if int(now_time.hour) == 23 and int(now_time.minute) == 58:
+    if int(now_time.hour) == 16 and int(now_time.minute) == 3:
         t_year = str(datetime.date.today().year).zfill(4)
         t_month = str(datetime.date.today().month).zfill(2)
         t_day = str(datetime.date.today().day).zfill(2)

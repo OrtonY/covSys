@@ -446,11 +446,14 @@ def updatemap(request):
     now = str(now_time)[:10]
     date = Covarea.objects.raw("select * from covarea where s_time < %s and e_time > %s", [now, now])
     for i in city_list:
+        yes = 0
         for line in date:
             if i in line.location:
                 todaydate.append(1)
+                yes = 1
                 break
-        todaydate.append(0)
+        if yes == 0:
+            todaydate.append(0)
 
     c_today = (
         Map()
